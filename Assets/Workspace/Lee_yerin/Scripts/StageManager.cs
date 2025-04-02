@@ -92,6 +92,8 @@ public class StageManager : MonoBehaviour
         // 타이머 종료 시 메시지 출력
         Debug.Log("[타임 종료~~]");
         IsFinished = true;
+
+        GameManager.Instance.ProcessStageCompletion();
     }
     #endregion
 }
