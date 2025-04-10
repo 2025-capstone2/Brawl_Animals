@@ -1,10 +1,8 @@
 fileFormatVersion: 2
-guid: 5e6494d2614a0d241a17d825eab81ba4
-labels:
-- FusionDefaultGlobal
+guid: 10fc4df2da32a41aaa32d77bc913491c
 NativeFormatImporter:
   externalObjects: {}
-  mainObjectFileID: 11400000
+  mainObjectFileID: 0
   userData: 
   assetBundleName: 
   assetBundleVariant: 
