@@ -1,5 +1,5 @@
 using UnityEngine;
-
+//GameManager Object에 추가
 public class CharacterSpawner : MonoBehaviour
 {
     [System.Serializable]
