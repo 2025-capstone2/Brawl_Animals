@@ -16,6 +16,19 @@ public class SessionManager : MonoBehaviour
     private string _currentSessionName; // 현재 세션 이름
     [SerializeField]
     private bool _isHost;   // 호스트 여부
+    #endregion
+
+    #region Matching Logic
+    /// <summary>
+    /// 세션 요청하는 메서드.
+    /// Button UI와 연결하기 위한 메서드.
+    /// </summary>
+    public void RequestSession()
+    {
+        // 현재 생성된 NetworkRunner 인스턴스가 없을 경우에만 실행
+        if (_runner == null)
+            StartMatching();
+    }
 
     /// <summary>
     /// 매칭 및 세션 연결을 시작하는 메서드.
