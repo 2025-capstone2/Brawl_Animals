@@ -5,6 +5,12 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+/// <summary>
+/// 개발자: 이예린
+/// Fusion 네트워크 세션(Room)을 생성하고 시작하는 역할을 담당하는 매니저 클래스.
+/// - 매칭(Matching) 결과를 전달받아 세션을 초기화 및 생성한다.
+/// - SessionManager는 오직 세션 연결만을 책임진다.
+/// </summary>
 public class SessionManager : MonoBehaviour
 {
     #region Runner Management
@@ -12,9 +18,10 @@ public class SessionManager : MonoBehaviour
     [SerializeField]
     [Tooltip("미리 연결해둔 NetworkRunner Prefab을 할당")]
     private NetworkRunner runnerPrefab; // 네트워크 기능을 담당할 runner
+    [SerializeField]
     private NetworkRunner _runner;  // 런타임에 Instantiate로 생성해 사용하는 실제 NetworkRunner 인스턴스
 
-    [Header("Session Settings")]
+    [Header("Session Info")]
     [SerializeField]
     private string _currentSessionName; // 현재 세션 이름
     [SerializeField]
@@ -26,11 +33,11 @@ public class SessionManager : MonoBehaviour
     /// 세션 요청하는 메서드.
     /// Button UI와 연결하기 위한 메서드.
     /// </summary>
-    public void RequestSession()
+    [ContextMenu("StartSession")]
+    public void StartSession()
     {
-        // 현재 생성된 NetworkRunner 인스턴스가 없을 경우에만 실행
-        if (_runner == null)
-            StartMatching();
+        Debug.Log("RequestSession");
+        StartMatching();
     }
 
     /// <summary>
@@ -39,25 +46,8 @@ public class SessionManager : MonoBehaviour
     /// </summary>
     private async void StartMatching()
     {
-        _runner = Instantiate(runnerPrefab);
-
-        await RequestMatching();    // 매칭 요청 및 결과 처리
-        await StartSessionAfterMatching();  // 세션 연결
-    }
-
-    /// <summary>
-    /// 매칭 요청을 처리하는 메서드.
-    /// 현재는 매칭 서버 없이 로컬에서 기본 설정을 함.
-    /// 이후 서버 연동 예정
-    /// </summary>
-    /// <returns></returns>
-    private async Task RequestMatching()
-    {
-        // TODO... AI 매칭 요청 보내고 결과 기다리기 - 방 이름과 플레이어가 Host인지 Client인지 여부
-
-        await Task.Delay(1000); // 1초 기다리기 (단위: milliseconds)
-
-        // TODO... 매칭 결과를 _currentSessionName과 _isHost에 반영하기
+        Debug.Log("StartMatching");
+        await StartSessionInternal();  // 세션 연결
     }
 
     /// <summary>
@@ -65,7 +55,7 @@ public class SessionManager : MonoBehaviour
     /// 세션 연결 후, Host가 수동으로 게임 씬을 로드한다.
     /// </summary>
     /// <returns></returns>
-    private async Task StartSessionAfterMatching()
+    private async Task StartSessionInternal()
     {
         // 방 이름이 설정되어 있지 않으면 에러 출력
         if (string.IsNullOrEmpty(_currentSessionName))
@@ -73,26 +63,67 @@ public class SessionManager : MonoBehaviour
             Debug.LogError("Session의 이름이 설정되지 않았습니다.");
             return;
         }
-
+        Debug.Log("세션 연결 시작");
         // 세션 연결 시작
-        await _runner.StartGame(new StartGameArgs()
+        if (_isHost)
         {
-            // Host 여부에 따라 모드 결정
-            GameMode = _isHost ? GameMode.Host : GameMode.Client,
-            // 세션(방) 이름 설정
-            SessionName = _currentSessionName,
-            Scene = null,
-            // 기본 씬 매니저 추가
-            // 씬 로딩 및 동기화를 자동으로 지원해줌
-            SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>()
-        });
+            // Host인 경우 방 생성
+            await _runner.StartGame(new StartGameArgs()
+            {
+                // Host 여부에 따라 모드 결정
+                GameMode = _isHost ? GameMode.Host : GameMode.Client,
+                // 세션(방) 이름 설정
+                SessionName = _currentSessionName,
+                Scene = null,
+                // 기본 씬 매니저 추가
+                // 씬 로딩 및 동기화를 자동으로 지원해줌
+                SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>(),
+            });
+        }
+        else
+        {
+            // Client인 경우 방 조인 시도 (대기 포함)
+            bool success = await TryJoinSessionWithRetry(_currentSessionName, maxRetry: 5, retryDelayMs: 1000);
 
-        if (_isHost)    // Host만 게임 플레이 씬을 로딩
-            // StartGame 완료 후 수동으로 게임 플레이 씬 로드
-            // Single 모드: 기존 씬 제거 후 새 씬 로드
-            await _runner.LoadScene("Room_Test_Scene", LoadSceneMode.Single);
+            if (!success)
+            {
+                Debug.LogError("SessionManager - 세션 조인 실패 (모든 재시도 실패)");
+                // TODO... 실패 처리 (로비로 복귀 등)
+            }
+        }
     }
 
+    /// <summary>
+    /// 세션 조인 시도를 일정 횟수 재시도하는 메서드
+    /// </summary>
+    private async Task<bool> TryJoinSessionWithRetry(string sessionName, int maxRetry = 5, int retryDelayMs = 1000)
+    {
+        for (int attempt = 1; attempt <= maxRetry; attempt++)
+        {
+            Debug.Log($"SessionManager - 세션 조인 시도 {attempt}/{maxRetry}...");
+
+            var result = await _runner.StartGame(new StartGameArgs()
+            {
+                GameMode = GameMode.Client,
+                SessionName = sessionName,
+                SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>(),
+                Scene = null,
+            });
+
+            if (result.Ok)
+            {
+                Debug.Log("SessionManager - 세션 조인 성공!");
+                return true;
+            }
+            else
+            {
+                Debug.LogWarning($"SessionManager - 세션 조인 실패... {retryDelayMs}ms 후 재시도 예정");
+                await Task.Delay(retryDelayMs);
+            }
+        }
+
+        return false;
+    }
     #endregion
 
     /// <summary>

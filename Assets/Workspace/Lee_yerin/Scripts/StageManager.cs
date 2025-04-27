@@ -13,6 +13,7 @@ public class StageManager : MonoBehaviour
     [Header("Time")]
     [Tooltip("스테이지의 전체 타이머 (초 단위로 설정)")]
     [SerializeField] float stageTime;
+
     [Header("Current players in stage ")]
     [Tooltip("현재 스테이지에서 생존 중인 플레이어들 보관하는 List")]
     [SerializeField] List<Object> alivePlayers = new();
@@ -41,7 +42,7 @@ public class StageManager : MonoBehaviour
         }
 
         // 스테이지 타이머 및 로직을 실행하는 함수 호출
-        StartLogicTimer();
+        //StartLogicTimer();
     }
     #endregion
 

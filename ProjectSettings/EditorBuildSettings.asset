@@ -6,6 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Workspace/Lee_yerin/Scenes/Game_Logic_Scene.unity
+    guid: cba7a5a94f3791d418c32537ff6fc4bb
+  - enabled: 1
     path: Assets/Workspace/Lee_yerin/Scenes/Test_Stage1 Scene.unity
     guid: 2f2845297eaf08d4ebbab7cd83222e2c
   - enabled: 1
