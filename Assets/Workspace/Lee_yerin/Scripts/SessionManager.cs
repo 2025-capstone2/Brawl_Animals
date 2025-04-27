@@ -7,11 +7,14 @@ using UnityEngine.SceneManagement;
 
 public class SessionManager : MonoBehaviour
 {
+    #region Runner Management
+    [Header("Network Runner")]
     [SerializeField]
     [Tooltip("미리 연결해둔 NetworkRunner Prefab을 할당")]
     private NetworkRunner runnerPrefab; // 네트워크 기능을 담당할 runner
     private NetworkRunner _runner;  // 런타임에 Instantiate로 생성해 사용하는 실제 NetworkRunner 인스턴스
 
+    [Header("Session Settings")]
     [SerializeField]
     private string _currentSessionName; // 현재 세션 이름
     [SerializeField]
@@ -34,7 +37,7 @@ public class SessionManager : MonoBehaviour
     /// 매칭 및 세션 연결을 시작하는 메서드.
     /// 매칭 결과에 따라 Host 또는 Client로 세션에 연결함.
     /// </summary>
-    public async void StartMatching()
+    private async void StartMatching()
     {
         _runner = Instantiate(runnerPrefab);
 
@@ -89,6 +92,8 @@ public class SessionManager : MonoBehaviour
             // Single 모드: 기존 씬 제거 후 새 씬 로드
             await _runner.LoadScene("Room_Test_Scene", LoadSceneMode.Single);
     }
+
+    #endregion
 
     /// <summary>
     /// 고유한 방 이름을 생성하는 메서드
