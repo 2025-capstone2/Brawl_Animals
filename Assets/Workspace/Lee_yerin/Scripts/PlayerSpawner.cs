@@ -27,7 +27,7 @@ public class PlayerSpawner : SimulationBehaviour, IPlayerJoined
             return;
         }
 
-        NetworkObject playerObj = Runner.Spawn(PlayerPrefab, new Vector3(0, 1, 0), Quaternion.identity, player);
+        NetworkObject playerObj = Runner.Spawn(PlayerPrefab, new Vector3(0, 1, 0), Quaternion.identity, inputAuthority: player);
 
         if (playerObj == null)
             Debug.Log("플레이어 생성 안 됨");
@@ -55,6 +55,10 @@ public class PlayerSpawner : SimulationBehaviour, IPlayerJoined
         if (Runner.IsServer)
         {
             SpawnPlayer(player);
+        }
+        if (Runner.IsClient)
+        {
+            Runner.ProvideInput = true;
         }
     }
     #endregion
