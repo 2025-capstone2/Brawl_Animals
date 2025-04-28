@@ -1,34 +1,33 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using Terresquall;
+using UnityEngine.InputSystem;
+
 public class PlayerController : MonoBehaviour
 {
     public float moveSpeed = 5f;
-    private Character character;
+    private Vector2 moveInput;
+    private Rigidbody rb;
 
-    void Start()
+    private void Awake()
     {
-        character = GetComponent<Character>();
+        rb = GetComponent<Rigidbody>();
     }
-    private void Update()
+
+    private void FixedUpdate()
     {
-        // VirtualJoystick에서 입력 받아오기
-        float horizontal = VirtualJoystick.GetAxis("Horizontal");
-        float vertical = VirtualJoystick.GetAxis("Vertical");
+        MoveCharacter();
+    }
 
-        // 방향 벡터 만들기
-        Vector3 direction = new Vector3(horizontal, 0, vertical).normalized;
+    public void OnMove(InputValue value)
+    {
+        // InputValue을 통해 입력받기
+        moveInput = value.Get<Vector2>();
+    }
 
-        // 실제 이동 처리
-        if (direction.magnitude > 0.1f)
-        {
-            transform.Translate(direction * moveSpeed * Time.deltaTime, Space.World);
-        }
-        // 스킬 사용 입력
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            character.UseSkill();
-        }
+    private void MoveCharacter()
+    {
+        // 물리적인 이동 처리
+        Vector3 move = new Vector3(moveInput.x, 0f, moveInput.y);
+        Vector3 velocity = new Vector3(move.x * moveSpeed, rb.velocity.y, move.z * moveSpeed);
+        rb.velocity = velocity;
     }
 }
