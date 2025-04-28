@@ -1,34 +1,32 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using Terresquall;
-public class PlayerController : MonoBehaviour
-{
-    public float moveSpeed = 5f;
-    private Character character;
+using UnityEngine.InputSystem;
 
-    void Start()
+public class CharacterMovementInputAction : MonoBehaviour
+{
+    [Header("Movement Settings")]
+    public float moveSpeed = 5f;
+
+    private Vector2 moveInput;
+    private Rigidbody rb;
+    private PlayerInput playerInput; // 필드로 선언
+
+    private void Awake()
     {
-        character = GetComponent<Character>();
+        rb = GetComponent<Rigidbody>();
+        playerInput = GetComponent<PlayerInput>(); // 여기서 필드에 저장
     }
+
     private void Update()
     {
-        // VirtualJoystick에서 입력 받아오기
-        float horizontal = VirtualJoystick.GetAxis("Horizontal");
-        float vertical = VirtualJoystick.GetAxis("Vertical");
+        // 입력은 Update()에서만 읽기
+        moveInput = playerInput.actions["Move"].ReadValue<Vector2>();
+        Debug.Log($"Move Input: {moveInput}");
+    }
 
-        // 방향 벡터 만들기
-        Vector3 direction = new Vector3(horizontal, 0, vertical).normalized;
-
-        // 실제 이동 처리
-        if (direction.magnitude > 0.1f)
-        {
-            transform.Translate(direction * moveSpeed * Time.deltaTime, Space.World);
-        }
-        // 스킬 사용 입력
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            character.UseSkill();
-        }
+    private void FixedUpdate()
+    {
+        Vector3 move = new Vector3(moveInput.x, 0, moveInput.y);
+        Vector3 velocity = new Vector3(move.x * moveSpeed, rb.velocity.y, move.z * moveSpeed);
+        rb.velocity = velocity;
     }
 }
