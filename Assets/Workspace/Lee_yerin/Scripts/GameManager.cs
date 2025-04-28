@@ -1,3 +1,4 @@
+using Fusion;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,7 +9,7 @@ using UnityEngine.SceneManagement;
 /// 게임의 전체적인 로직을 관리하는 싱글톤 클래스
 /// 스테이지 진행 및 게임 흐름을 제어한다
 /// </summary>
-public class GameManager : MonoBehaviour
+public class GameManager : NetworkBehaviour
 {
     #region Singleton
     static GameManager instance;    // 싱글톤 인스턴스
@@ -21,7 +22,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] List<string> selectedStages;   // 선택된 스테이지 목록
 
     const int MIN_STAGE_COUNT = 3;  // 최소 스테이지 개수
-    [SerializeField]int ongoingStage = 0;   // 현재 진행 중인 스테이지 인덱스
+    [SerializeField] int ongoingStage = 0;   // 현재 진행 중인 스테이지 인덱스
     #endregion
 
     #region Unity Event
