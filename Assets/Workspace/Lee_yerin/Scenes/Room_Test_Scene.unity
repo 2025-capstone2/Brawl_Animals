@@ -189,8 +189,6 @@ MonoBehaviour:
   selectableStages: []
   selectedStages: []
   ongoingStage: 0
-  playerPrefab: {fileID: 5622140301583662809, guid: 1e60ae573c2854546a9b6785e919216e,
-    type: 3}
 --- !u!1 &1169630482
 GameObject:
   m_ObjectHideFlags: 0
@@ -465,7 +463,7 @@ GameObject:
   - component: {fileID: 1755368849}
   - component: {fileID: 1755368848}
   - component: {fileID: 1755368847}
-  - component: {fileID: 1755368846}
+  - component: {fileID: 1755368850}
   m_Layer: 0
   m_Name: ==[Runner]==
   m_TagString: Untagged
@@ -473,20 +471,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1755368846
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1755368845}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9d6deb3553bbf314f8410ec8b251eaed, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  PlayerPrefab: {fileID: 4018240343111223314, guid: 1e60ae573c2854546a9b6785e919216e,
-    type: 3}
 --- !u!114 &1755368847
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -583,6 +567,20 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1755368850
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1755368845}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d6deb3553bbf314f8410ec8b251eaed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PlayerPrefab: {fileID: 4018240343111223314, guid: 1e60ae573c2854546a9b6785e919216e,
+    type: 3}
 --- !u!1 &1870849580
 GameObject:
   m_ObjectHideFlags: 0

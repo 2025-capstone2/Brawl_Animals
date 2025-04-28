@@ -28,23 +28,20 @@ public class SessionManager : MonoBehaviour
     private bool _isHost;   // 호스트 여부
     #endregion
 
-    #region Matching Logic
-    /// <summary>
-    /// 세션 요청하는 메서드.
-    /// Button UI와 연결하기 위한 메서드.
-    /// </summary>
-    [ContextMenu("StartSession")]
-    public void StartSession()
+    #region Unity Event
+    private void Start()
     {
-        Debug.Log("RequestSession");
-        StartMatching();
+        StartSession();
     }
+    #endregion
 
+    #region Session Logic
+    [ContextMenu("StartSession")]
     /// <summary>
     /// 매칭 및 세션 연결을 시작하는 메서드.
     /// 매칭 결과에 따라 Host 또는 Client로 세션에 연결함.
     /// </summary>
-    private async void StartMatching()
+    private async void StartSession()
     {
         Debug.Log("StartMatching");
         await StartSessionInternal();  // 세션 연결
@@ -74,10 +71,11 @@ public class SessionManager : MonoBehaviour
                 GameMode = _isHost ? GameMode.Host : GameMode.Client,
                 // 세션(방) 이름 설정
                 SessionName = _currentSessionName,
-                Scene = null,
                 // 기본 씬 매니저 추가
                 // 씬 로딩 및 동기화를 자동으로 지원해줌
                 SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>(),
+                Scene = null,
+                PlayerCount = 4
             });
         }
         else
