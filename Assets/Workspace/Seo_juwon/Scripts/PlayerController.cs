@@ -2,47 +2,46 @@ using UnityEngine;
 using Fusion;
 using UnityEngine.InputSystem;
 
-/// <summary>
-/// 각 플레이어가 자신의 입력을 통해 Rigidbody로 움직이는 네트워크 플레이어 컨트롤러
-/// </summary>
-[RequireComponent(typeof(Rigidbody))]
-[RequireComponent(typeof(NetworkObject))]
 public class PlayerController : NetworkBehaviour
 {
-    public float moveSpeed = 5f;
-    private Vector2 moveInput;
-    private Rigidbody rb;
+    [SerializeField] private Rigidbody rb;
+    [SerializeField] private float moveSpeed = 10f;  // 이동 속도
 
-    private void Awake()
+    private Vector2 moveInput;
+
+    public void Start()
     {
-        rb = GetComponent<Rigidbody>();
+        if (HasInputAuthority)  // 자신이 이 플레이어의 소유자인 경우에만 처리
+        {
+            Debug.Log("조작 가능한 내 것");
+        }
+        else Debug.Log("조작 불가능");
+
     }
 
+    // 네트워크에서 물리적 이동을 처리
     public override void FixedUpdateNetwork()
     {
-        if (HasInputAuthority == false)
-            return; // 내가 조작할 권한이 없으면 움직이지 않는다
+        if (HasInputAuthority)  // 자신이 이 플레이어의 소유자인 경우에만 처리
+        {
+            HandleMovement();
+        }
+    }
+    // 이동 처리 함수
+    private void HandleMovement()
+    {
+        // 입력을 받아서 이동 방향 결정
+        Vector3 moveDirection = new Vector3(moveInput.x, 0, moveInput.y);
+        moveDirection.Normalize();  // 방향만 정규화
 
-        MoveCharacter();
+        // 물리적으로 이동 처리
+        rb.MovePosition(rb.position + moveDirection * moveSpeed * Time.fixedDeltaTime);
     }
 
+    // PlayerInput으로부터 이동 입력을 받는 함수
     public void OnMove(InputValue value)
     {
         moveInput = value.Get<Vector2>();
+        Debug.Log("Move Input: " + moveInput);
     }
-     public void OnInput(NetworkRunner runner, NetworkInput input)
-    {
-         var data = new PlayerInputData
-        {
-            Move = moveInput
-        };
-        input.Set(data);
-    }
-    private void MoveCharacter()
-    {
-        Vector3 move = new Vector3(moveInput.x, 0f, moveInput.y);
-        Vector3 velocity = new Vector3(move.x * moveSpeed, rb.velocity.y, move.z * moveSpeed);
-        rb.velocity = velocity;
-    }
-
 }
