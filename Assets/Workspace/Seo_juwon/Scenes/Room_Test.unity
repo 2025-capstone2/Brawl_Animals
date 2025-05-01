@@ -629,7 +629,7 @@ MonoBehaviour:
   inputHandler: {fileID: 1755368852}
   _runner: {fileID: 1755368848}
   _currentSessionName: DevRoom
-  _isHost: 1
+  _isHost: 0
 --- !u!4 &1563928845
 Transform:
   m_ObjectHideFlags: 0

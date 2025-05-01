@@ -33,7 +33,7 @@ public class PlayerController : NetworkBehaviour
         // 입력을 받아서 이동 방향 결정
         Vector3 moveDirection = new Vector3(moveInput.x, 0, moveInput.y);
         moveDirection.Normalize();  // 방향만 정규화
-
+        Debug.Log("Move Input: " + moveDirection);
         // 물리적으로 이동 처리
         rb.MovePosition(rb.position + moveDirection * moveSpeed * Time.fixedDeltaTime);
     }
@@ -42,6 +42,5 @@ public class PlayerController : NetworkBehaviour
     public void OnMove(InputValue value)
     {
         moveInput = value.Get<Vector2>();
-        Debug.Log("Move Input: " + moveInput);
     }
 }
