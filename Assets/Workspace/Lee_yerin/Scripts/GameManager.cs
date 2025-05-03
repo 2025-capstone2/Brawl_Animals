@@ -32,11 +32,6 @@ public class GameManager : NetworkBehaviour
     {
         Debug.Log("InitializeStagesAndStart");
 
-        if (Runner == null)
-            Debug.Log("Runner is Null");
-        else
-            Debug.Log(Runner.gameObject.name);
-
         if (Runner.IsServer && HasStateAuthority)
         {
             Debug.Log("HasStateAuthority");
