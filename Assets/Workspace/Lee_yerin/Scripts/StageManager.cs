@@ -31,7 +31,7 @@ public class StageManager : NetworkBehaviour
     #region Unitye Event
     private void OnEnable()
     {
-        if (gameManager != null)
+        if (gameManager == null)
         {
             Debug.LogError("해당 스테이지에 GameManager가 할당되지 않아 정상적인 게임 로직 실행 불가능");
             return;
