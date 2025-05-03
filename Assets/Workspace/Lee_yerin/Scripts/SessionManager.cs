@@ -18,6 +18,8 @@ public class SessionManager : MonoBehaviour
     [SerializeField]
     [Tooltip("미리 연결해둔 NetworkRunner Prefab을 할당")]
     private NetworkRunner runnerPrefab; // 네트워크 기능을 담당할 runner
+    [SerializeField] 
+    private InputHandler inputHandler;
     [SerializeField]
     private NetworkRunner _runner;  // 런타임에 Instantiate로 생성해 사용하는 실제 NetworkRunner 인스턴스
 
@@ -61,6 +63,12 @@ public class SessionManager : MonoBehaviour
             return;
         }
         Debug.Log("세션 연결 시작");
+
+        _runner.ProvideInput = true;
+        if (inputHandler != null)
+            _runner.AddCallbacks(inputHandler);
+        else
+            Debug.LogError("InputHandler가 연결되어 있지 않습니다.");
         // 세션 연결 시작
         if (_isHost)
         {

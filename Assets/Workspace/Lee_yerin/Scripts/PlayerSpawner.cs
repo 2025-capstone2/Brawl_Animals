@@ -2,6 +2,7 @@ using Fusion;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 /// <summary>
 /// 개발자: 이예린
@@ -27,7 +28,8 @@ public class PlayerSpawner : SimulationBehaviour, IPlayerJoined
             return;
         }
 
-        NetworkObject playerObj = Runner.Spawn(PlayerPrefab, new Vector3(0, 1, 0), Quaternion.identity, player);
+        NetworkObject playerObj = Runner.Spawn(PlayerPrefab, new Vector3(0, 1, 0), Quaternion.identity, inputAuthority: player);
+
 
         if (playerObj == null)
             Debug.Log("플레이어 생성 안 됨");
@@ -45,6 +47,7 @@ public class PlayerSpawner : SimulationBehaviour, IPlayerJoined
 
     public void PlayerJoined(PlayerRef player)
     {
+        Debug.Log(player);
         if (Runner == null)
         {
             Debug.LogError("Runner가 설정되어 있지 않습니다.");
@@ -55,6 +58,10 @@ public class PlayerSpawner : SimulationBehaviour, IPlayerJoined
         if (Runner.IsServer)
         {
             SpawnPlayer(player);
+        }
+        if (Runner.IsClient)
+        {
+            Runner.ProvideInput = true;
         }
     }
     #endregion

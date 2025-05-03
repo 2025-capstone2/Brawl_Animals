@@ -1,34 +1,46 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using Terresquall;
-public class PlayerController : MonoBehaviour
+using Fusion;
+using UnityEngine.InputSystem;
+
+public class PlayerController : NetworkBehaviour
 {
-    public float moveSpeed = 5f;
-    private Character character;
+    [SerializeField] private Rigidbody rb;
+    [SerializeField] private float moveSpeed = 10f;  // 이동 속도
 
-    void Start()
+    private Vector2 moveInput;
+
+    public void Start()
     {
-        character = GetComponent<Character>();
+        if (HasInputAuthority)  // 자신이 이 플레이어의 소유자인 경우에만 처리
+        {
+            Debug.Log("조작 가능한 내 것");
+        }
+        else Debug.Log("조작 불가능");
+
     }
-    private void Update()
+
+    // 네트워크에서 물리적 이동을 처리
+    public override void FixedUpdateNetwork()
     {
-        // VirtualJoystick에서 입력 받아오기
-        float horizontal = VirtualJoystick.GetAxis("Horizontal");
-        float vertical = VirtualJoystick.GetAxis("Vertical");
-
-        // 방향 벡터 만들기
-        Vector3 direction = new Vector3(horizontal, 0, vertical).normalized;
-
-        // 실제 이동 처리
-        if (direction.magnitude > 0.1f)
+        if (HasInputAuthority)  // 자신이 이 플레이어의 소유자인 경우에만 처리
         {
-            transform.Translate(direction * moveSpeed * Time.deltaTime, Space.World);
+            HandleMovement();
         }
-        // 스킬 사용 입력
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            character.UseSkill();
-        }
+    }
+    // 이동 처리 함수
+    private void HandleMovement()
+    {
+        // 입력을 받아서 이동 방향 결정
+        Vector3 moveDirection = new Vector3(moveInput.x, 0, moveInput.y);
+        moveDirection.Normalize();  // 방향만 정규화
+        Debug.Log("Move Input: " + moveDirection);
+        // 물리적으로 이동 처리
+        rb.MovePosition(rb.position + moveDirection * moveSpeed * Time.fixedDeltaTime);
+    }
+
+    // PlayerInput으로부터 이동 입력을 받는 함수
+    public void OnMove(InputValue value)
+    {
+        moveInput = value.Get<Vector2>();
     }
 }
