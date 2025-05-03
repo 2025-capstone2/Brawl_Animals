@@ -25,14 +25,14 @@ public class StageManager : MonoBehaviour
     public bool IsFinished { get; private set; }
 
     #region Unitye Event
-    private void Start()
+    private void OnEnable()
     {
         // 생존 중인 플레이어가 없거나 리스트가 비어 있으면, 스테이지 실행을 중지하고 메시지 출력
-        if (alivePlayers == null || alivePlayers.Count == 0)
+        /*if (alivePlayers == null || alivePlayers.Count == 0)
         {
             Debug.LogWarning("현재 스테이지 안에 있는 플레이어를 찾을 수 없습니다.");
             return;
-        }
+        }*/
 
         // 스테이지 타임이 0 이하일 경우, 유효하지 않은 값이므로 종료
         if (stageTime <= 0)
@@ -42,7 +42,7 @@ public class StageManager : MonoBehaviour
         }
 
         // 스테이지 타이머 및 로직을 실행하는 함수 호출
-        //StartLogicTimer();
+        StartLogicTimer();
     }
     #endregion
 
@@ -65,7 +65,7 @@ public class StageManager : MonoBehaviour
     /// <returns></returns>
     IEnumerator StageLogicCoroutine()
     {
-        Debug.Log("[게임 타이머 시작!!]"); // 타이머 시작 메시지 출력
+        Debug.Log($"[게임 타이머 시작!!] / {gameObject.name}"); // 타이머 시작 메시지 출력
         float count = 0;    // 타이머 카운트 변수 (초 단위로 진행)
         IsFinished = false;
 
@@ -93,6 +93,7 @@ public class StageManager : MonoBehaviour
         // 타이머 종료 시 메시지 출력
         Debug.Log("[타임 종료~~]");
         IsFinished = true;
+        stageLogic = null;
 
         GameManager.Instance.ProcessStageCompletion();
     }
