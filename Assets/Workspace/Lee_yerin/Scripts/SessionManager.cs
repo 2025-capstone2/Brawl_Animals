@@ -72,6 +72,8 @@ public class SessionManager : MonoBehaviour
         // 세션 연결 시작
         if (_isHost)
         {
+            // 현재 활성화된 씬의 build index를 SceneRef로 변환하여 지정 (Fusion이 씬을 재로드하도록 유도)
+            var sceneRef = SceneRef.FromIndex(SceneManager.GetActiveScene().buildIndex);
             // Host인 경우 방 생성
             await _runner.StartGame(new StartGameArgs()
             {
@@ -82,7 +84,8 @@ public class SessionManager : MonoBehaviour
                 // 기본 씬 매니저 추가
                 // 씬 로딩 및 동기화를 자동으로 지원해줌
                 SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>(),
-                Scene = null,
+                // Scene을 null이 아닌 실제 현재 씬으로 명시 (씬 내 NetworkObject 자동 등록 유도)
+                Scene = sceneRef,
                 PlayerCount = 4
             });
         }
