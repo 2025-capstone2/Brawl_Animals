@@ -11,11 +11,6 @@ using UnityEngine.SceneManagement;
 /// </summary>
 public class GameManager : NetworkBehaviour
 {
-    #region Singleton
-    static GameManager instance;    // 싱글톤 인스턴스
-    public static GameManager Instance => instance;
-    #endregion
-
     #region Variables
     //TODO... Fusion 연결 후 룸 안에 있는 플레이어 받아와 저장
     [SerializeField] List<StageManager> selectableStages; // 선택 가능한 스테이지 목록
@@ -26,17 +21,6 @@ public class GameManager : NetworkBehaviour
     #endregion
 
     #region Unity Event
-    private void Awake()
-    {
-        // 싱글톤 패턴 적용
-        if (instance == null)
-        {
-            instance = this;
-            DontDestroyOnLoad(gameObject);  // 씬이 변경되어도 삭제되지 않도록 설정
-        }
-        else
-            Destroy(gameObject);    // 중복 생성 방지
-    }
     #endregion
 
     #region Game Logic
@@ -46,8 +30,19 @@ public class GameManager : NetworkBehaviour
     [ContextMenu("InitializeStagesAndStart")]
     public void InitializeStagesAndStart()
     {
-        SelectRandomUniqueStage();  // 랜덤으로 스테이지 선택
-        MoveNextStage();    // 첫 번째 스테이지로 이동
+        Debug.Log("InitializeStagesAndStart");
+
+        if (Runner == null)
+            Debug.Log("Runner is Null");
+        else
+            Debug.Log(Runner.gameObject.name);
+
+        if (Runner.IsServer && HasStateAuthority)
+        {
+            Debug.Log("HasStateAuthority");
+            SelectRandomUniqueStage();  // 랜덤으로 스테이지 선택
+        }
+        //MoveNextStage();            // 첫 번째 스테이지로 이동
     }
 
     /// <summary>
@@ -66,6 +61,8 @@ public class GameManager : NetworkBehaviour
             return;
         }
 
+        int[] chosenStages = new int[MIN_STAGE_COUNT];
+
         for (int i = 0; i < MIN_STAGE_COUNT; i++)
         {
             int stageNum = Random.Range(0, selectableStages.Count);
@@ -74,8 +71,18 @@ public class GameManager : NetworkBehaviour
             while (selectedStages.Contains(selectableStages[stageNum]))
                 stageNum = Random.Range(0, selectableStages.Count);
 
-            selectedStages.Add(selectableStages[stageNum]);
+            chosenStages[i] = stageNum;
         }
+
+        RPC_BroadcastSelectedStages(chosenStages);
+    }
+
+    [Rpc(RpcSources.StateAuthority, RpcTargets.All, HostMode = RpcHostMode.SourceIsServer)]
+    public void RPC_BroadcastSelectedStages(int [] chosenStages)
+    {
+        selectedStages.Clear();
+        foreach (int idx in chosenStages)
+            selectedStages.Add(selectableStages[idx]);
     }
 
     #region Stage Management

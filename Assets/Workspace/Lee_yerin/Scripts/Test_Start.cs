@@ -7,6 +7,6 @@ public class Test_Start : MonoBehaviour
 {
     public void GoToGameScene()
     {
-        SceneManager.LoadScene("Room_Test");
+        SceneManager.LoadScene("Room_Test_Scene");
     }
 }

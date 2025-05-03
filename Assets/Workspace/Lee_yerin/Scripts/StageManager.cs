@@ -1,3 +1,4 @@
+using Fusion;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -8,7 +9,7 @@ using UnityEngine;
 /// 
 /// 스테이지의 기본 동작을 관리하는 클래스
 /// </summary>
-public class StageManager : MonoBehaviour
+public class StageManager : NetworkBehaviour
 {
     [Header("Time")]
     [Tooltip("스테이지의 전체 타이머 (초 단위로 설정)")]
@@ -22,7 +23,7 @@ public class StageManager : MonoBehaviour
     /// <summary>
     /// 스테이지의 종료 여부를 반환하는 프로퍼티
     /// </summary>
-    public bool IsFinished { get; private set; }
+    public NetworkBool IsFinished { get; private set; }
 
     #region Unitye Event
     private void OnEnable()
@@ -95,7 +96,7 @@ public class StageManager : MonoBehaviour
         IsFinished = true;
         stageLogic = null;
 
-        GameManager.Instance.ProcessStageCompletion();
+        // GameManager.Instance.ProcessStageCompletion();
     }
     #endregion
 }
