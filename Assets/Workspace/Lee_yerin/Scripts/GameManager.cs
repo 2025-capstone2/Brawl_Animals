@@ -18,11 +18,11 @@ public class GameManager : NetworkBehaviour
 
     #region Variables
     //TODO... Fusion 연결 후 룸 안에 있는 플레이어 받아와 저장
-    [SerializeField] List<string> selectableStages; // 선택 가능한 스테이지 목록
-    [SerializeField] List<string> selectedStages;   // 선택된 스테이지 목록
+    [SerializeField] List<StageManager> selectableStages; // 선택 가능한 스테이지 목록
+    [SerializeField] List<StageManager> selectedStages;   // 선택된 스테이지 목록
 
     const int MIN_STAGE_COUNT = 3;  // 최소 스테이지 개수
-    [SerializeField] int ongoingStage = 0;   // 현재 진행 중인 스테이지 인덱스
+    [SerializeField] int ongoingStage = -1;   // 현재 진행 중인 스테이지 인덱스
     #endregion
 
     #region Unity Event
@@ -43,6 +43,7 @@ public class GameManager : NetworkBehaviour
     /// <summary>
     /// 게임을 초기화하고 첫 번째 스테이지를 시작하는 메서드
     /// </summary>
+    [ContextMenu("InitializeStagesAndStart")]
     public void InitializeStagesAndStart()
     {
         SelectRandomUniqueStage();  // 랜덤으로 스테이지 선택
@@ -84,7 +85,13 @@ public class GameManager : NetworkBehaviour
     private void MoveNextStage()
     {
         Debug.Log("스테이지를 이동합니다.");
-        SceneManager.LoadScene(selectedStages[ongoingStage++]);
+
+        //TODO... 다음 스테이지 로딩 UI 활성화
+        if (ongoingStage >= 0)
+            selectedStages[ongoingStage].gameObject.SetActive(false);   // 현재 스테이지 비활성화
+
+        selectedStages[++ongoingStage].gameObject.SetActive(true);   // 다음 스테이지 활성화
+        //TODO... 다음 스테이지 로딩 UI 비활성화
     }
 
     /// <summary>
@@ -94,7 +101,13 @@ public class GameManager : NetworkBehaviour
     private void MoveNextStage(int stageNum)
     {
         Debug.Log("추가 스테이지로 이동합니다.");
-        SceneManager.LoadScene(selectableStages[stageNum]);
+        
+        //TODO... 다음 스테이지 로딩 UI 활성화
+        selectedStages.Add(selectableStages[stageNum]); // 추가로 선택된 스테이지를 selectedStages 리스트에 추가
+        selectedStages[ongoingStage].gameObject.SetActive(false);   // 현재 스테이지 비활성화
+        selectedStages[++ongoingStage].gameObject.SetActive(true);   // 다음 스테이지 활성화
+        //TODO... 다음 스테이지 로딩 UI 활성화
+
     }
     #endregion
 
@@ -104,7 +117,7 @@ public class GameManager : NetworkBehaviour
     /// </summary>
     public void ProcessStageCompletion()
     {
-        if (ongoingStage < MIN_STAGE_COUNT)
+        if (ongoingStage + 1 < MIN_STAGE_COUNT)
             MoveNextStage();    // 다음 스테이지 이동
         else
         {
