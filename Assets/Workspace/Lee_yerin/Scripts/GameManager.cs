@@ -77,6 +77,11 @@ public class GameManager : NetworkBehaviour
         RPC_BroadcastSelectedStages(chosenStages);
     }
 
+    /// <summary>
+    /// 서버에서 선택한 스테이지 인덱스 배열을 모든 클라이언트에 동기화하는 RPC 메서드
+    /// 선택된 인덱스를 기반으로 selectedStages 리스트를 클라이언트마다 동일하게 구성
+    /// </summary>
+    /// <param name="chosenStages">서버가 선정한 인덱스 배열</param>
     [Rpc(RpcSources.StateAuthority, RpcTargets.All, HostMode = RpcHostMode.SourceIsServer)]
     public void RPC_BroadcastSelectedStages(int [] chosenStages)
     {
