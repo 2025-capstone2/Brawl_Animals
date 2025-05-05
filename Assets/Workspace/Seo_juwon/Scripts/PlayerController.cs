@@ -2,26 +2,31 @@ using UnityEngine;
 using Fusion;
 using UnityEngine.InputSystem;
 using Fusion.Addons.SimpleKCC;
-
+/// <summary>
+/// 플레이어의 이동 제어 컨트롤러
+/// 입력은 외부 InputHandler에서 Fusion을 통해 전달받음
+/// kccSample 참고함
+/// </summary>
 public class PlayerController : NetworkBehaviour
 {
-    public SimpleKCC kcc;
+    public SimpleKCC kcc; // SimpleKCC 컴포넌트
 
     [Header("Movement Settings")]
-    public float moveSpeed = 10f;
-    public float jumpImpulse = 10f;
-    public float upGravity = -25f;
-    public float downGravity = -40f;
-    public float groundAcceleration = 50f;
-    public float groundDeceleration = 25f;
-    public float airAcceleration = 20f;
-    public float airDeceleration = 2f;
+    public float moveSpeed = 10f; // 이동 속도
+    public float jumpImpulse = 10f; //혹시 모를 점프 변수
+    public float upGravity = -25f; //kcc 중력 관련 변수
+    public float downGravity = -40f; //kcc 중력 관련 변수
+    public float groundAcceleration = 50f; //kcc 관련 땅에 있을 때 가속도
+    public float groundDeceleration = 25f; //kcc 관련 땅에 있을 때 가속도
+    public float airAcceleration = 20f; //kcc 관련 떠 있을 때 가속도
+    public float airDeceleration = 2f; //kcc 관련 떠 있을 때 가속도
 
     [Networked]
     private Vector3 moveVelocity { get; set; }
 
     public override void FixedUpdateNetwork()
     {
+        //GetInput 받아오지 못했을 때
         if (!GetInput<NetworkInputData>(out var inputData))
         {
             Debug.LogWarning("GetInput 실패");

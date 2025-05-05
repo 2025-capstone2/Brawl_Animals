@@ -3,9 +3,12 @@ using Fusion.Sockets;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 
+/// <summary>
+/// 플레이어 입력을 수신, 입력값 전달
+/// PlayerPrefab에 붙이고, Spawn된 후 Runner에 스스로 등록함
+/// </summary>
 public class InputHandler :  NetworkBehaviour, INetworkRunnerCallbacks
 {
     private Vector2 moveInput;
@@ -19,8 +22,9 @@ public class InputHandler :  NetworkBehaviour, INetworkRunnerCallbacks
     public void OnMove(InputValue value)
     {
         moveInput = value.Get<Vector2>();
-        Debug.Log($"🟢 [OnMove] moveInput = {moveInput}");
     }
+    // Fusion이 이 플레이어의 입력을 요청할 때 호출됨
+    // 네트워크 입력 데이터로 moveInput 전달
     public void OnInput(NetworkRunner runner, NetworkInput input)
     {
         var data = new NetworkInputData
@@ -29,6 +33,7 @@ public class InputHandler :  NetworkBehaviour, INetworkRunnerCallbacks
         };
         input.Set(data);
     }
+    //네트워크에서 Spawn되었을 때 호출됨
      public override void Spawned()
     {
         if (HasInputAuthority)
@@ -38,7 +43,7 @@ public class InputHandler :  NetworkBehaviour, INetworkRunnerCallbacks
             Debug.Log("[InputHandler] Runner에 등록됨");
         }
     }
-
+    // 이 오브젝트가 네트워크에서 제거될 때 호출됨
     public override void Despawned(NetworkRunner runner, bool hasState)
     {
         if (HasInputAuthority)
