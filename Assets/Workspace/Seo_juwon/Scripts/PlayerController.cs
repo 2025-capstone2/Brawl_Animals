@@ -24,12 +24,9 @@ public class PlayerController : NetworkBehaviour
     {
         if (!GetInput<NetworkInputData>(out var inputData))
         {
-            Debug.LogWarning("❌ GetInput 실패");
+            Debug.LogWarning("GetInput 실패");
             return;
         }
-
-        Debug.Log("✅ GetInput 성공: " + inputData.moveInput);
-
         // 방향 입력
         Vector3 inputDirection = kcc.TransformRotation * new Vector3(inputData.moveInput.x, 0, inputData.moveInput.y);
         inputDirection.Normalize();

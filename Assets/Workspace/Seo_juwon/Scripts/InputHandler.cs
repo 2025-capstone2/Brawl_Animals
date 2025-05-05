@@ -13,8 +13,6 @@ public class InputHandler :  NetworkBehaviour, INetworkRunnerCallbacks
     public void SetControlledPlayer(NetworkObject player)
     {
         localPlayer = player;
-        Debug.Log($"[InputHandler] LocalPlayer 연결됨: {player.name}");
-        Debug.Log($"✅ [SetControlledPlayer] LocalPlayer 연결됨: {player.name}, Authority: {player.InputAuthority}");
     }
 
     // PlayerInput에서 호출됨
@@ -35,8 +33,8 @@ public class InputHandler :  NetworkBehaviour, INetworkRunnerCallbacks
     {
         if (HasInputAuthority)
         {
-            Runner.ProvideInput = true;             // ✅ 꼭 있어야 함
-            Runner.AddCallbacks(this);              // ✅ Runner에 자동 등록
+            Runner.ProvideInput = true;
+            Runner.AddCallbacks(this);
             Debug.Log("[InputHandler] Runner에 등록됨");
         }
     }
