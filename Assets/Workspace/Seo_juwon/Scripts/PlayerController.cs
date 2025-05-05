@@ -1,46 +1,58 @@
 using UnityEngine;
 using Fusion;
 using UnityEngine.InputSystem;
+using Fusion.Addons.SimpleKCC;
 
 public class PlayerController : NetworkBehaviour
 {
-    [SerializeField] private Rigidbody rb;
-    [SerializeField] private float moveSpeed = 10f;  // 이동 속도
+    public SimpleKCC kcc;
 
-    private Vector2 moveInput;
+    [Header("Movement Settings")]
+    public float moveSpeed = 10f;
+    public float jumpImpulse = 10f;
+    public float upGravity = -25f;
+    public float downGravity = -40f;
+    public float groundAcceleration = 50f;
+    public float groundDeceleration = 25f;
+    public float airAcceleration = 20f;
+    public float airDeceleration = 2f;
 
-    public void Start()
-    {
-        if (HasInputAuthority)  // 자신이 이 플레이어의 소유자인 경우에만 처리
-        {
-            Debug.Log("조작 가능한 내 것");
-        }
-        else Debug.Log("조작 불가능");
+    [Networked]
+    private Vector3 moveVelocity { get; set; }
 
-    }
-
-    // 네트워크에서 물리적 이동을 처리
     public override void FixedUpdateNetwork()
     {
-        if (HasInputAuthority)  // 자신이 이 플레이어의 소유자인 경우에만 처리
+        if (!GetInput<NetworkInputData>(out var inputData))
         {
-            HandleMovement();
+            Debug.LogWarning("❌ GetInput 실패");
+            return;
         }
-    }
-    // 이동 처리 함수
-    private void HandleMovement()
-    {
-        // 입력을 받아서 이동 방향 결정
-        Vector3 moveDirection = new Vector3(moveInput.x, 0, moveInput.y);
-        moveDirection.Normalize();  // 방향만 정규화
-        Debug.Log("Move Input: " + moveDirection);
-        // 물리적으로 이동 처리
-        rb.MovePosition(rb.position + moveDirection * moveSpeed * Time.fixedDeltaTime);
-    }
 
-    // PlayerInput으로부터 이동 입력을 받는 함수
-    public void OnMove(InputValue value)
-    {
-        moveInput = value.Get<Vector2>();
+        Debug.Log("✅ GetInput 성공: " + inputData.moveInput);
+
+        // 방향 입력
+        Vector3 inputDirection = kcc.TransformRotation * new Vector3(inputData.moveInput.x, 0, inputData.moveInput.y);
+        inputDirection.Normalize();
+
+        // 중력 적용
+        kcc.SetGravity(kcc.RealVelocity.y >= 0f ? upGravity : downGravity);
+
+        // 이동 속도 계산
+        Vector3 desiredVelocity = inputDirection * moveSpeed;
+
+        if (kcc.ProjectOnGround(desiredVelocity, out Vector3 projected))
+        {
+            desiredVelocity = projected.normalized * moveSpeed;
+        }
+
+        // 가속도 계산
+        float accel = desiredVelocity == Vector3.zero
+            ? (kcc.IsGrounded ? groundDeceleration : airDeceleration)
+            : (kcc.IsGrounded ? groundAcceleration : airAcceleration);
+
+        moveVelocity = Vector3.Lerp(moveVelocity, desiredVelocity, accel * Runner.DeltaTime);
+
+        // 실제 이동
+        kcc.Move(moveVelocity);
     }
 }

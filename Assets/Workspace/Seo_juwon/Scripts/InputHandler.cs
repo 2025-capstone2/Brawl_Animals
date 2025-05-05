@@ -6,21 +6,47 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 
-public class InputHandler : MonoBehaviour, INetworkRunnerCallbacks
+public class InputHandler :  NetworkBehaviour, INetworkRunnerCallbacks
 {
-    private Vector2 move;
-
-    // PlayerInput에서 OnMove 액션이 호출되면 move 값을 설정
-    public void OnMove(InputValue value)
+    private Vector2 moveInput;
+    private NetworkObject localPlayer;
+    public void SetControlledPlayer(NetworkObject player)
     {
-        move = value.Get<Vector2>();
-        Debug.Log("Move Input: " + move);
+        localPlayer = player;
+        Debug.Log($"[InputHandler] LocalPlayer 연결됨: {player.name}");
+        Debug.Log($"✅ [SetControlledPlayer] LocalPlayer 연결됨: {player.name}, Authority: {player.InputAuthority}");
     }
 
-    // OnInput 메서드에서 네트워크 입력을 세팅
+    // PlayerInput에서 호출됨
+    public void OnMove(InputValue value)
+    {
+        moveInput = value.Get<Vector2>();
+        Debug.Log($"🟢 [OnMove] moveInput = {moveInput}");
+    }
     public void OnInput(NetworkRunner runner, NetworkInput input)
     {
-        input.Set(new NetworkInputData { moveInput = move });
+        var data = new NetworkInputData
+        {
+            moveInput = moveInput
+        };
+        input.Set(data);
+    }
+     public override void Spawned()
+    {
+        if (HasInputAuthority)
+        {
+            Runner.ProvideInput = true;             // ✅ 꼭 있어야 함
+            Runner.AddCallbacks(this);              // ✅ Runner에 자동 등록
+            Debug.Log("[InputHandler] Runner에 등록됨");
+        }
+    }
+
+    public override void Despawned(NetworkRunner runner, bool hasState)
+    {
+        if (HasInputAuthority)
+        {
+            runner.RemoveCallbacks(this);
+        }
     }
 
     // Fusion 필수 콜백들 (빈 구현)
