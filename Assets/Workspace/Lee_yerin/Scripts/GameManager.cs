@@ -11,11 +11,6 @@ using UnityEngine.SceneManagement;
 /// </summary>
 public class GameManager : NetworkBehaviour
 {
-    #region Singleton
-    static GameManager instance;    // 싱글톤 인스턴스
-    public static GameManager Instance => instance;
-    #endregion
-
     #region Variables
     //TODO... Fusion 연결 후 룸 안에 있는 플레이어 받아와 저장
     [SerializeField] List<StageManager> selectableStages; // 선택 가능한 스테이지 목록
@@ -26,28 +21,22 @@ public class GameManager : NetworkBehaviour
     #endregion
 
     #region Unity Event
-    private void Awake()
-    {
-        // 싱글톤 패턴 적용
-        if (instance == null)
-        {
-            instance = this;
-            DontDestroyOnLoad(gameObject);  // 씬이 변경되어도 삭제되지 않도록 설정
-        }
-        else
-            Destroy(gameObject);    // 중복 생성 방지
-    }
     #endregion
 
     #region Game Logic
     /// <summary>
     /// 게임을 초기화하고 첫 번째 스테이지를 시작하는 메서드
     /// </summary>
-    [ContextMenu("InitializeStagesAndStart")]
     public void InitializeStagesAndStart()
     {
+        // 서버이자 해당 NetworkObject의 StateAuthority를 가진 경우에만 실행
+        if (!(Runner.IsServer && HasStateAuthority))
+            return;
+
+        Debug.Log("InitializeStagesAndStart");
+
         SelectRandomUniqueStage();  // 랜덤으로 스테이지 선택
-        MoveNextStage();    // 첫 번째 스테이지로 이동
+        RpcMoveNextStage(); // 첫 번째 스테이지로 이동
     }
 
     /// <summary>
@@ -66,6 +55,8 @@ public class GameManager : NetworkBehaviour
             return;
         }
 
+        int[] chosenStages = new int[MIN_STAGE_COUNT];
+
         for (int i = 0; i < MIN_STAGE_COUNT; i++)
         {
             int stageNum = Random.Range(0, selectableStages.Count);
@@ -74,40 +65,52 @@ public class GameManager : NetworkBehaviour
             while (selectedStages.Contains(selectableStages[stageNum]))
                 stageNum = Random.Range(0, selectableStages.Count);
 
-            selectedStages.Add(selectableStages[stageNum]);
+            chosenStages[i] = stageNum;
         }
+
+        RPC_BroadcastSelectedStages(chosenStages);
+    }
+
+    /// <summary>
+    /// 서버에서 선택한 스테이지 인덱스 배열을 모든 클라이언트에 동기화하는 RPC 메서드
+    /// 선택된 인덱스를 기반으로 selectedStages 리스트를 클라이언트마다 동일하게 구성
+    /// </summary>
+    /// <param name="chosenStages">서버가 선정한 인덱스 배열</param>
+    [Rpc(RpcSources.StateAuthority, RpcTargets.All, HostMode = RpcHostMode.SourceIsServer)]
+    private void RPC_BroadcastSelectedStages(int [] chosenStages)
+    {
+        selectedStages.Clear();
+        foreach (int idx in chosenStages)
+            selectedStages.Add(selectableStages[idx]);
     }
 
     #region Stage Management
     /// <summary>
-    /// 선택된 스테이지 목록에서 다음 스테이지로 이동하는 메서드
+    /// 선택된 스테이지 목록에서 다음 스테이지로 이동하는 RPC 메서드
+    /// 서버(StateAuthority)에서 호출되며, 모든 클라이언트에게 스테이지 전환을 동기화함.
+    /// isExtraStage가 true일 경우, 추가 스테이지를 동적으로 선택하여 목록에 포함시킴.
     /// </summary>
-    private void MoveNextStage()
+    /// <param name="isExtraStage">true이면 선택 가능한 스테이지 중 하나를 추가로 선택함</param>
+    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+    private void RpcMoveNextStage(bool isExtraStage = false)
     {
-        Debug.Log("스테이지를 이동합니다.");
+        // 추가 스테이지가 필요한 경우, 랜덤으로 하나를 선택해 selectedStages에 추가
+        if (isExtraStage)
+        {
+            int extraStageNum = Random.Range(0, selectableStages.Count);
+            selectedStages.Add(selectableStages[extraStageNum]); // 추가로 선택된 스테이지를 selectedStages 리스트에 추가
+        }
 
-        //TODO... 다음 스테이지 로딩 UI 활성화
-        if (ongoingStage >= 0)
-            selectedStages[ongoingStage].gameObject.SetActive(false);   // 현재 스테이지 비활성화
-
-        selectedStages[++ongoingStage].gameObject.SetActive(true);   // 다음 스테이지 활성화
-        //TODO... 다음 스테이지 로딩 UI 비활성화
-    }
-
-    /// <summary>
-    /// 특정 추가 스테이지로 이동하는 메서드
-    /// </summary>
-    /// <param name="stageNum">이동할 추가 스테이지의 인덱스</param>
-    private void MoveNextStage(int stageNum)
-    {
-        Debug.Log("추가 스테이지로 이동합니다.");
+        // 이전 스테이지가 존재하면 비활성화
+        if (ongoingStage >= 0 && ongoingStage < selectedStages.Count)
+            selectedStages[ongoingStage].gameObject.SetActive(false);
         
-        //TODO... 다음 스테이지 로딩 UI 활성화
-        selectedStages.Add(selectableStages[stageNum]); // 추가로 선택된 스테이지를 selectedStages 리스트에 추가
-        selectedStages[ongoingStage].gameObject.SetActive(false);   // 현재 스테이지 비활성화
-        selectedStages[++ongoingStage].gameObject.SetActive(true);   // 다음 스테이지 활성화
-        //TODO... 다음 스테이지 로딩 UI 활성화
+        // 다음 스테이지로 진행
+        ongoingStage++;
 
+        // 다음 스테이지가 존재하면 활성화
+        if (ongoingStage < selectedStages.Count)
+            selectedStages[ongoingStage].gameObject.SetActive(true);
     }
     #endregion
 
@@ -117,8 +120,8 @@ public class GameManager : NetworkBehaviour
     /// </summary>
     public void ProcessStageCompletion()
     {
-        if (ongoingStage + 1 < MIN_STAGE_COUNT)
-            MoveNextStage();    // 다음 스테이지 이동
+        if (Runner.IsServer && HasStateAuthority && ongoingStage + 1 < MIN_STAGE_COUNT)
+            RpcMoveNextStage();    // 다음 스테이지 이동
         else
         {
             // TODO... 추가 스테이지를 진행해야 하는지 여부 결정하는 로직 구현
