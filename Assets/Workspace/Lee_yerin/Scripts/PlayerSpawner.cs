@@ -28,12 +28,11 @@ public class PlayerSpawner : SimulationBehaviour, IPlayerJoined
             return;
         }
 
-        NetworkObject playerObj = Runner.Spawn(PlayerPrefab, new Vector3(0, 1, 0), Quaternion.identity, inputAuthority: player);
-
-
-        if (playerObj == null)
+        NetworkObject playerObj = Runner.Spawn(PlayerPrefab, new Vector3(0, 1, 0), Quaternion.identity, player);
+        if (playerObj == null){
             Debug.Log("플레이어 생성 안 됨");
-
+            return;
+        }
         // 플레이어 오브젝트 HasInputAuthority 확인용 
         if (playerObj.HasInputAuthority)
         {
@@ -54,14 +53,10 @@ public class PlayerSpawner : SimulationBehaviour, IPlayerJoined
             return;
         }
 
-        // Host만 Spawn 책임을 진다
+        // Host만 Spawn 책임을 진다 권한 부여는 InputHandler에.
         if (Runner.IsServer)
         {
             SpawnPlayer(player);
-        }
-        if (Runner.IsClient)
-        {
-            Runner.ProvideInput = true;
         }
     }
     #endregion

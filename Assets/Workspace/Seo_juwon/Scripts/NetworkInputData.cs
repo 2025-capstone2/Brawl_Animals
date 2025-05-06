@@ -4,4 +4,5 @@ using UnityEngine;
 public struct NetworkInputData : INetworkInput
 {
     public Vector2 moveInput;
+    public NetworkButtons buttons;
 }
