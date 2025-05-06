@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 7338647979122405274}
   - component: {fileID: 4737854798626701471}
   m_Layer: 0
-  m_Name: Water
+  m_Name: WaterSpray
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
