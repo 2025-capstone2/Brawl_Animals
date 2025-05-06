@@ -5,6 +5,7 @@ public class Character : MonoBehaviour
     public string characterName;
     public int maxHp = 1000;
     public int currentHp = 1000;
+    private float lastSkillTime = -10f; //시작할 때 바로 사용 가능
 
     public Skill skill;
     public Transform firePoint;
@@ -44,8 +45,30 @@ public class Character : MonoBehaviour
             Die();
         }
     }
+    //스킬 사용
     public void UseSkill()
     {
-        skill?.Execute(this);
+        if (skill == null)
+        {
+            Debug.LogWarning("스킬이 연결되어 있지 않음");
+            return;
+        }
+        if (!CanSkill())
+            return;
+
+        skill.Execute(this);
+        lastSkillTime = Time.time;
+    }
+    //쿨타임 확인
+    private bool CanSkill()
+    {
+        if (Time.time < lastSkillTime + skill.cooltime)
+        {
+            float remain = (lastSkillTime + skill.cooltime) - Time.time;
+            Debug.Log($"스킬 쿨타임 {remain:F1}초");
+            return false;
+        }
+
+        return true;
     }
 }

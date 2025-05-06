@@ -10,6 +10,7 @@ using Fusion.Addons.SimpleKCC;
 public class PlayerController : NetworkBehaviour
 {
     public SimpleKCC kcc; // SimpleKCC 컴포넌트
+    public Character character; //캐릭터 구분
 
     [Header("Movement Settings")]
     public float moveSpeed = 10f; // 이동 속도
@@ -56,5 +57,9 @@ public class PlayerController : NetworkBehaviour
 
         // 실제 이동
         kcc.Move(moveVelocity);
+        if (inputData.skill)
+        {
+            character.UseSkill();  // 각 캐릭터마다 고유 스킬 사용
+        }
     }
 }
