@@ -56,7 +56,6 @@ public class InputHandler :  NetworkBehaviour, INetworkRunnerCallbacks
         {
             Runner.ProvideInput = true;
             Runner.AddCallbacks(this);
-            Debug.Log("[InputHandler] Runner에 등록됨");
         }
     }
     // 이 오브젝트가 네트워크에서 제거될 때 호출됨

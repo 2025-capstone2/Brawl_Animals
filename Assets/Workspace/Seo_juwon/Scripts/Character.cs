@@ -86,7 +86,7 @@ public class Character : MonoBehaviour
         if (Time.time < lastAttack + AttackCooltime)
         {
             float remain = (lastAttack + AttackCooltime) - Time.time;
-            Debug.Log($"⏳ 일반 공격 쿨타임 중: {remain:F1}초 남음");
+            Debug.Log($"공격 쿨타임: {remain:F1}초 남음");
             return false;
         }
 
@@ -122,7 +122,7 @@ public class Character : MonoBehaviour
             if (enemy != null && enemy != this)
             {
                 enemy.TakeDamage(AttackDamage);
-                Debug.Log($"🗡️ {enemy.characterName}: {AttackDamage} 피해 입음");
+                Debug.Log($"{enemy.characterName}: {AttackDamage} 피해 입음");
             }
         }
     }
