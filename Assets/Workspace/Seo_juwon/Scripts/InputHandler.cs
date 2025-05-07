@@ -14,6 +14,7 @@ public class InputHandler :  NetworkBehaviour, INetworkRunnerCallbacks
     private Vector2 moveInput;
     private NetworkObject localPlayer;
     private bool skill;
+    private bool attack;
     public void SetControlledPlayer(NetworkObject player)
     {
         localPlayer = player;
@@ -31,15 +32,22 @@ public class InputHandler :  NetworkBehaviour, INetworkRunnerCallbacks
         var data = new NetworkInputData
         {
             moveInput = moveInput,
-            skill = skill
+            skill = skill,
+            attack = attack
         };
         input.Set(data);
         skill = false;
+        attack = false;
     }
     public void OnSkill()
     {
         skill = true;
         Debug.Log("스킬 사용");
+    }
+    public void OnAttack()
+    {
+        attack = true;
+        Debug.Log("공격 입력됨");
     }
     //네트워크에서 Spawn되었을 때 호출됨
      public override void Spawned()
@@ -48,7 +56,6 @@ public class InputHandler :  NetworkBehaviour, INetworkRunnerCallbacks
         {
             Runner.ProvideInput = true;
             Runner.AddCallbacks(this);
-            Debug.Log("[InputHandler] Runner에 등록됨");
         }
     }
     // 이 오브젝트가 네트워크에서 제거될 때 호출됨

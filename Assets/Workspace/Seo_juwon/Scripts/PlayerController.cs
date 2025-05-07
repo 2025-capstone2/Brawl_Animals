@@ -30,7 +30,6 @@ public class PlayerController : NetworkBehaviour
         //GetInput 받아오지 못했을 때
         if (!GetInput<NetworkInputData>(out var inputData))
         {
-            Debug.LogWarning("GetInput 실패");
             return;
         }
         // 방향 입력
@@ -60,6 +59,13 @@ public class PlayerController : NetworkBehaviour
         if (inputData.skill)
         {
             character.UseSkill();  // 각 캐릭터마다 고유 스킬 사용
+        }
+        if (GetInput(out NetworkInputData data))
+        {
+            if (data.attack)
+            {
+                character.TryAttack(); //공격
+            }
         }
     }
 }
