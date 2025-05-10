@@ -64,11 +64,6 @@ public class SessionManager : MonoBehaviour
         }
         Debug.Log("세션 연결 시작");
 
-        _runner.ProvideInput = true;
-        if (inputHandler != null)
-            _runner.AddCallbacks(inputHandler);
-        else
-            Debug.LogError("InputHandler가 연결되어 있지 않습니다.");
         // 세션 연결 시작
         if (_isHost)
         {
