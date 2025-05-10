@@ -541,6 +541,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d1f31781798ace5438df2ecea24d6685, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameManager: {fileID: 0}
   stageTime: 10
   alivePlayers:
   - {fileID: 0}
@@ -574,12 +575,13 @@ MonoBehaviour:
   m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SortKey: 1907898263
+  SortKey: 4086964819
   ObjectInterest: 1
   Flags: 262145
   NestedObjects: []
   NetworkedBehaviours:
   - {fileID: 759923966}
+  - {fileID: 759923965}
   ForceRemoteRenderTimeframe: 0
 --- !u!1 &867233380
 GameObject:
@@ -822,7 +824,7 @@ MonoBehaviour:
   runnerPrefab: {fileID: 1755368848}
   _runner: {fileID: 1755368848}
   _currentSessionName: Game
-  _isHost: 0
+  _isHost: 1
 --- !u!1 &1719807575
 GameObject:
   m_ObjectHideFlags: 0
@@ -1085,7 +1087,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d6deb3553bbf314f8410ec8b251eaed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PlayerPrefab: {fileID: 4018240343111223314, guid: e169f38fb1971fb4c9b0c0f63f86b118,
+  PlayerPrefab: {fileID: 4018240343111223314, guid: d0b64caa744770241904160b838db386,
     type: 3}
 --- !u!114 &1755368851
 MonoBehaviour:

@@ -18,8 +18,6 @@ public class SessionManager : MonoBehaviour
     [SerializeField]
     [Tooltip("미리 연결해둔 NetworkRunner Prefab을 할당")]
     private NetworkRunner runnerPrefab; // 네트워크 기능을 담당할 runner
-    [SerializeField] 
-    private InputHandler inputHandler;
     [SerializeField]
     private NetworkRunner _runner;  // 런타임에 Instantiate로 생성해 사용하는 실제 NetworkRunner 인스턴스
 
