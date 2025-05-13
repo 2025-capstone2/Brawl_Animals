@@ -1,11 +1,13 @@
 using UnityEngine;
 using System.Collections.Generic;
-
+/// <summary>
+/// 데미지 크기, 피격 대상 관리
+/// </summary>
 public class WaterSprayController : MonoBehaviour
 {
     public GameObject owner; // 발사자 캐릭터
 
-    private float damageCooldown = 0.5f;
+    private float damageCooltime = 0.5f; //한번 데미지를 입은 뒤 연속적으로 피해를 입지 않기 위해
     private Dictionary<GameObject, float> lastHitTimes = new Dictionary<GameObject, float>();
 
     private void OnParticleCollision(GameObject other)
@@ -18,7 +20,7 @@ public class WaterSprayController : MonoBehaviour
         Character character = other.GetComponent<Character>();
         if (character != null)
         {
-            if (!lastHitTimes.ContainsKey(other) || Time.time - lastHitTimes[other] >= damageCooldown)
+            if (!lastHitTimes.ContainsKey(other) || Time.time - lastHitTimes[other] >= damageCooltime)
             {
                 character.TakeDamage(50);
                 lastHitTimes[other] = Time.time;

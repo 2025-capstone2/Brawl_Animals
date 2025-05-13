@@ -28,7 +28,7 @@ public class PlayerSpawner : SimulationBehaviour, IPlayerJoined
             return;
         }
 
-        NetworkObject playerObj = Runner.Spawn(PlayerPrefab, new Vector3(0, 1, 0), Quaternion.identity, inputAuthority: player);
+        NetworkObject playerObj = Runner.Spawn(PlayerPrefab, new Vector3(0, 1, 0), Quaternion.identity, player);
 
 
         if (playerObj == null)
@@ -59,10 +59,12 @@ public class PlayerSpawner : SimulationBehaviour, IPlayerJoined
         {
             SpawnPlayer(player);
         }
+        /*
         if (Runner.IsClient)
         {
             Runner.ProvideInput = true;
         }
+        */
     }
     #endregion
 }
