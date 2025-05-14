@@ -168,7 +168,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 634cf6cf338f47748ba101cf0df114de, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  kcc: {fileID: 0}
+  character: {fileID: 0}
   moveSpeed: 5
+  jumpImpulse: 10
+  upGravity: -25
+  downGravity: -40
+  groundAcceleration: 50
+  groundDeceleration: 25
+  airAcceleration: 20
+  airDeceleration: 2
 --- !u!114 &5699380459216588828
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -182,8 +191,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   characterName: Player1
+  animator: {fileID: 0}
   maxHp: 1000
   currentHp: 1000
+  AttackCooltime: 1
+  AttackRange: 2
+  AttackDamage: 20
+  skill: {fileID: 0}
   firePoint: {fileID: 0}
 --- !u!114 &7967689864182096193
 MonoBehaviour:
@@ -199,7 +213,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SortKey: 505594674
   ObjectInterest: 1
-  Flags: 1
+  Flags: 262145
   NestedObjects: []
   NetworkedBehaviours:
   - {fileID: 862801129570647655}

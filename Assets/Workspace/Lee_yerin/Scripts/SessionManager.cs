@@ -1,4 +1,5 @@
 using Fusion;
+using Fusion.Sockets;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -62,28 +63,48 @@ public class SessionManager : MonoBehaviour
         }
         Debug.Log("세션 연결 시작");
 
+        // NetworkRunner 프리팹을 인스턴스화하여 런타임에 사용할 실제 Runner 생성
+        _runner = Instantiate(runnerPrefab);
+        _runner.gameObject.name = "==[Runner]==";
+        Debug.Log("Runner 생성 완료");
+
+        // 씬 동기화 및 네트워크 오브젝트 자동 등록을 위한 SceneManager 컴포넌트 추가
+        // Fusion은 Runner 오브젝트에 SceneManager가 붙어 있어야 StartGame 동작 시 자동으로 씬을 관리함
+        var sceneManager = _runner.gameObject.AddComponent<NetworkSceneManagerDefault>();
+
         // 세션 연결 시작
         if (_isHost)
         {
+            Debug.Log("호스트");
             // 현재 활성화된 씬의 build index를 SceneRef로 변환하여 지정 (Fusion이 씬을 재로드하도록 유도)
             var sceneRef = SceneRef.FromIndex(SceneManager.GetActiveScene().buildIndex);
             // Host인 경우 방 생성
-            await _runner.StartGame(new StartGameArgs()
+            var result = await _runner.StartGame(new StartGameArgs()
             {
                 // Host 여부에 따라 모드 결정
                 GameMode = _isHost ? GameMode.Host : GameMode.Client,
                 // 세션(방) 이름 설정
                 SessionName = _currentSessionName,
-                // 기본 씬 매니저 추가
-                // 씬 로딩 및 동기화를 자동으로 지원해줌
-                SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>(),
+                // Runner에 부착된 SceneManager를 StartGameArgs에 지정
+                // Fusion이 씬 전환, 네트워크 오브젝트 자동 등록 및 동기화를 수행할 수 있도록 함
+                SceneManager = sceneManager,
                 // Scene을 null이 아닌 실제 현재 씬으로 명시 (씬 내 NetworkObject 자동 등록 유도)
                 Scene = sceneRef,
-                PlayerCount = 4
+                PlayerCount = 4,
+                Address = NetAddress.Any(),
             });
+
+            if (!result.Ok)
+            {
+                Debug.LogError($"StartGame 실패 → Ok: {result.Ok}, ShutdownReason: {result.ShutdownReason}, ErrorMessage: {result.ErrorMessage}");
+                return;
+            }
+
+            Debug.Log("StartGame 성공");
         }
         else
         {
+            Debug.Log("클라이언트");
             // Client인 경우 방 조인 시도 (대기 포함)
             bool success = await TryJoinSessionWithRetry(_currentSessionName, maxRetry: 5, retryDelayMs: 1000);
 
@@ -127,15 +148,4 @@ public class SessionManager : MonoBehaviour
         return false;
     }
     #endregion
-
-    /// <summary>
-    /// 고유한 방 이름을 생성하는 메서드
-    /// GUID를 사용하여 이름 충돌 없이 유일한 SessionName을 생성
-    /// 이를 통해 방 이름 충돌을 방지하고, 매칭마다 독립적인 방을 생성 가능
-    /// </summary>
-    /// <returns>랜덤으로 생성된 방 이름(string)</returns>
-    /*private string GenerateRandomRoomName()
-    {
-        return "Room_" + System.Guid.NewGuid().ToString();
-    }*/
 }
