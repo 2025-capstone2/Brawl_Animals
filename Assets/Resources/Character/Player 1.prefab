@@ -18,6 +18,7 @@ GameObject:
   - component: {fileID: 5419196601753560389}
   - component: {fileID: 952355318055887179}
   - component: {fileID: 8041304104161485888}
+  - component: {fileID: -4294851122239989272}
   m_Layer: 0
   m_Name: Player 1
   m_TagString: Untagged
@@ -126,8 +127,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   characterName: Player1
+  animator: {fileID: 0}
   maxHp: 1000
   currentHp: 1000
+  AttackCooltime: 1
+  AttackRange: 2
+  AttackDamage: 20
+  skill: {fileID: 0}
   firePoint: {fileID: 0}
 --- !u!114 &5622140301583662809
 MonoBehaviour:
@@ -148,6 +154,7 @@ MonoBehaviour:
   NetworkedBehaviours:
   - {fileID: 952355318055887179}
   - {fileID: 8041304104161485888}
+  - {fileID: -4294851122239989272}
   ForceRemoteRenderTimeframe: 0
 --- !u!114 &4227836446395021810
 MonoBehaviour:
@@ -219,8 +226,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 634cf6cf338f47748ba101cf0df114de, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rb: {fileID: 5419196601753560389}
+  kcc: {fileID: 0}
+  character: {fileID: 0}
   moveSpeed: 5
+  jumpImpulse: 10
+  upGravity: -25
+  downGravity: -40
+  groundAcceleration: 50
+  groundDeceleration: 25
+  airAcceleration: 20
+  airDeceleration: 2
 --- !u!114 &8041304104161485888
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -238,3 +253,15 @@ MonoBehaviour:
   SyncParent: 0
   _autoAOIOverride: 1
   DisableSharedModeInterpolation: 0
+--- !u!114 &-4294851122239989272
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4018240343111223314}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 98f2ef66dee584f45877186636b9df8d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
