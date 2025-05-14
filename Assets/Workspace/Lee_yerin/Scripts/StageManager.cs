@@ -1,3 +1,4 @@
+using Fusion;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -8,8 +9,11 @@ using UnityEngine;
 /// 
 /// 스테이지의 기본 동작을 관리하는 클래스
 /// </summary>
-public class StageManager : MonoBehaviour
+public class StageManager : NetworkBehaviour
 {
+    [Header("GameManager")]
+    [SerializeField] GameManager gameManager;
+
     [Header("Time")]
     [Tooltip("스테이지의 전체 타이머 (초 단위로 설정)")]
     [SerializeField] float stageTime;
@@ -22,17 +26,23 @@ public class StageManager : MonoBehaviour
     /// <summary>
     /// 스테이지의 종료 여부를 반환하는 프로퍼티
     /// </summary>
-    public bool IsFinished { get; private set; }
+    public NetworkBool IsFinished { get; private set; }
 
     #region Unitye Event
-    private void Start()
+    private void OnEnable()
     {
+        if (gameManager == null)
+        {
+            Debug.LogError("해당 스테이지에 GameManager가 할당되지 않아 정상적인 게임 로직 실행 불가능");
+            return;
+        }
+
         // 생존 중인 플레이어가 없거나 리스트가 비어 있으면, 스테이지 실행을 중지하고 메시지 출력
-        if (alivePlayers == null || alivePlayers.Count == 0)
+        /*if (alivePlayers == null || alivePlayers.Count == 0)
         {
             Debug.LogWarning("현재 스테이지 안에 있는 플레이어를 찾을 수 없습니다.");
             return;
-        }
+        }*/
 
         // 스테이지 타임이 0 이하일 경우, 유효하지 않은 값이므로 종료
         if (stageTime <= 0)
@@ -42,7 +52,7 @@ public class StageManager : MonoBehaviour
         }
 
         // 스테이지 타이머 및 로직을 실행하는 함수 호출
-        //StartLogicTimer();
+        StartLogicTimer();
     }
     #endregion
 
@@ -65,7 +75,7 @@ public class StageManager : MonoBehaviour
     /// <returns></returns>
     IEnumerator StageLogicCoroutine()
     {
-        Debug.Log("[게임 타이머 시작!!]"); // 타이머 시작 메시지 출력
+        Debug.Log($"[게임 타이머 시작!!] / {gameObject.name}"); // 타이머 시작 메시지 출력
         float count = 0;    // 타이머 카운트 변수 (초 단위로 진행)
         IsFinished = false;
 
@@ -93,8 +103,9 @@ public class StageManager : MonoBehaviour
         // 타이머 종료 시 메시지 출력
         Debug.Log("[타임 종료~~]");
         IsFinished = true;
+        stageLogic = null;
 
-        GameManager.Instance.ProcessStageCompletion();
+        gameManager.ProcessStageCompletion();
     }
     #endregion
 }

@@ -3,44 +3,62 @@ using Fusion.Sockets;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 
+/// <summary>
+/// 플레이어 입력을 수신, 입력값 전달
+/// PlayerPrefab에 붙이고, Spawn된 후 Runner에 스스로 등록함
+/// </summary>
 public class InputHandler :  NetworkBehaviour, INetworkRunnerCallbacks
 {
     private Vector2 moveInput;
     private NetworkObject localPlayer;
+    private bool skill;
+    private bool attack;
     public void SetControlledPlayer(NetworkObject player)
     {
         localPlayer = player;
-        Debug.Log($"[InputHandler] LocalPlayer 연결됨: {player.name}");
-        Debug.Log($"✅ [SetControlledPlayer] LocalPlayer 연결됨: {player.name}, Authority: {player.InputAuthority}");
     }
 
     // PlayerInput에서 호출됨
     public void OnMove(InputValue value)
     {
         moveInput = value.Get<Vector2>();
-        Debug.Log($"🟢 [OnMove] moveInput = {moveInput}");
     }
+    // Fusion이 이 플레이어의 입력을 요청할 때 호출됨
+    // 네트워크 입력 데이터로 moveInput 전달
     public void OnInput(NetworkRunner runner, NetworkInput input)
     {
         var data = new NetworkInputData
         {
-            moveInput = moveInput
+            moveInput = moveInput,
+            skill = skill,
+            attack = attack
         };
         input.Set(data);
+        skill = false;
+        attack = false;
     }
+    public void OnSkill()
+    {
+        skill = true;
+        Debug.Log("스킬 사용");
+    }
+    public void OnAttack()
+    {
+        attack = true;
+        Debug.Log("공격 입력됨");
+    }
+    //네트워크에서 Spawn되었을 때 호출됨
      public override void Spawned()
     {
         if (HasInputAuthority)
         {
-            Runner.ProvideInput = true;             // ✅ 꼭 있어야 함
-            Runner.AddCallbacks(this);              // ✅ Runner에 자동 등록
-            Debug.Log("[InputHandler] Runner에 등록됨");
+            Runner.ProvideInput = true;
+            Runner.AddCallbacks(this);
         }
     }
-
+    // 이 오브젝트가 네트워크에서 제거될 때 호출됨
     public override void Despawned(NetworkRunner runner, bool hasState)
     {
         if (HasInputAuthority)
