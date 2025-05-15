@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 891553516435649415}
   - component: {fileID: 4561848070483523077}
   - component: {fileID: 8586525894693624615}
-  - component: {fileID: 570560481965006810}
   - component: {fileID: 3317617978666817901}
   - component: {fileID: 5622140301583662809}
   - component: {fileID: 4227836446395021810}
@@ -91,29 +90,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!136 &570560481965006810
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4018240343111223314}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5000001
-  m_Height: 2
-  m_Direction: 1
-  m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
 --- !u!114 &3317617978666817901
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -149,7 +125,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SortKey: 1098558527
   ObjectInterest: 1
-  Flags: 786433
+  Flags: 262145
   NestedObjects: []
   NetworkedBehaviours:
   - {fileID: 952355318055887179}
@@ -245,7 +221,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 4018240343111223314}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 158639473, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Script: {fileID: 11500000, guid: 98f2ef66dee584f45877186636b9df8d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _stateAuthorityChangeErrorCorrectionDelta: 1

@@ -64,7 +64,7 @@ public class PlayerSpawner : SimulationBehaviour, IPlayerJoined
             return;
         }
 
-        // Host만 Spawn 책임을 진다
+        // Host만 Spawn 책임을 진다 권한 부여는 InputHandler에.
         if (Runner.IsServer)
         {
             SpawnPlayer(player);
