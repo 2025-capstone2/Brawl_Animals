@@ -1,6 +1,7 @@
+using Fusion;
 using UnityEngine;
 
-public class Character : MonoBehaviour
+public class Character : NetworkBehaviour
 {
     public string characterName;
     public Animator animator; //공격 모션
@@ -14,6 +15,8 @@ public class Character : MonoBehaviour
     private bool isUsingSkill = false;
     public Skill skill;
     public Transform firePoint;
+
+    public StageManager currentStage;
 
     private void Start()
     {
@@ -40,6 +43,7 @@ public class Character : MonoBehaviour
         Debug.Log($"{characterName} 사망");
         //죽으면 오브젝트 사라짐
         gameObject.SetActive(false);
+        currentStage.AlivePlayers.Remove(this); // 플레이어 사망 시 스테이지 생존자 리스트에서 삭제
     }
     //맵 아래로 떨어졌을 때
     private void Update()
