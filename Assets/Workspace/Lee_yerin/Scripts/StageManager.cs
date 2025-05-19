@@ -26,7 +26,8 @@ public class StageManager : NetworkBehaviour
 
     [Header("Players")]
     [Tooltip("현재 스테이지에서 생존 중인 플레이어들 보관하는 List")]
-    [SerializeField] List<NetworkObject> alivePlayers;
+    [SerializeField] List<Character> alivePlayers;
+    public List<Character> AlivePlayers => alivePlayers;
 
     [Tooltip("플레이어들 스폰 위치 List")]
     [SerializeField] List<Transform> playersSpawnPoints;
@@ -79,9 +80,15 @@ public class StageManager : NetworkBehaviour
     /// <returns></returns>
     IEnumerator StageLogicCoroutine()
     {
+        yield return null;  // 한 프레임 기다리기 (클라이언트의 gameManager.playerCharacters 세팅 기다리기)
+
         // 스테이지 생존 플레이어 리스트 세팅
         for (int i = 0; i < gameManager.playerCharacters.Count; i++)
-            alivePlayers.Add(gameManager.playerCharacters[i]);
+        {
+            alivePlayers.Add(gameManager.playerCharacters[i].GetComponent<Character>());
+
+            alivePlayers[i].currentStage = this;
+        }
 
         Debug.Log($"[게임 타이머 시작!!] / {gameObject.name}"); // 타이머 시작 메시지 출력
         float count = 0;    // 타이머 카운트 변수 (초 단위로 진행)
@@ -91,23 +98,21 @@ public class StageManager : NetworkBehaviour
         while (count < stageTime)
         {
             // 스테이지에 단 한 명의 플레이어만 남았다면, 스테이지 종료
-            /*if (alivePlayers.Count == 1)
+            if (alivePlayers.Count == 1)
             {
                 Debug.Log("최후의 플레이어 탄생! 게임 스테이지를 종료합니다~");
                 stageLogic = null;
                 IsFinished = true;
+                alivePlayers.Clear();
+                gameManager.ProcessStageCompletion();
                 yield break;
-            }*/
+            }
             Debug.Log($"현재 스테이지 종료까지 남은 시간 : {stageTime - count}");   // 남은 시간 출력
             count += 1; // 타이머 카운트 1 증가
             // 타이머 1초씩 증가
             yield return new WaitForSecondsRealtime(1f);
         }
 
-        foreach (var player in alivePlayers)
-        {
-            Destroy(player);
-        }
         // 타이머 종료 시 메시지 출력
         Debug.Log("[타임 종료~~]");
         IsFinished = true;

@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.XR;
 
 /// <summary>
 /// 개발자: 이예린
@@ -40,6 +41,9 @@ public class PlayerSpawner : SimulationBehaviour, IPlayerJoined, IPlayerLeft
             if (playerObj == null)
                 Debug.Log("플레이어 생성 안 됨");
 
+            // Fusion 내부에 등록 (클라이언트에서도 이 오브젝트 찾을 수 있도록)
+            Runner.SetPlayerObject(player, playerObj);
+
             // 플레이어 오브젝트 HasInputAuthority 확인용 
             if (playerObj.HasInputAuthority)
             {
@@ -73,10 +77,12 @@ public class PlayerSpawner : SimulationBehaviour, IPlayerJoined, IPlayerLeft
         }
 
         // Host만 Spawn 책임을 진다 권한 부여는 InputHandler에.
-        if (Runner.IsServer)
+        /*if (Runner.IsServer)
         {
             pendingPlayers.Add(player); // 대기 등록
-        }
+        }*/
+
+        pendingPlayers.Add(player); // 대기 등록
     }
 
     /// <summary>

@@ -1,4 +1,5 @@
 using Fusion;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -135,11 +136,45 @@ public class GameManager : NetworkBehaviour
 
         if (Runner.IsServer)
         {
-            foreach (NetworkObject character in playerSpawner?.SpawnAllPendingPlayers(selectedStages[ongoingStage].PlayersSpawnPoints)) // 플레이어 캐릭터 스폰 시작
+            foreach (NetworkObject character in playerSpawner?.SpawnAllPendingPlayers(selectedStages[ongoingStage].PlayersSpawnPoints))
+            {
                 playerCharacters.Add(character);
+            }
+        }
+        else
+        {
+            // 클라이언트 playerCharacters 동기화 작업 실행
+            StartCoroutine(RebuildPlayerCharactersNextFrame());
         }
 
-        selectedStages[ongoingStage].StartLogic();  // 스테이지 로직 실행
+            selectedStages[ongoingStage].StartLogic();  // 스테이지 로직 실행
+    }
+
+    /// <summary>
+    /// 클라이언트에서 Fusion 동기화가 완료된 이후,
+    /// 각 플레이어에 대응하는 NetworkObject를 수집하여 playerCharacters 리스트를 재구성하는 코루틴입니다.
+    /// Fusion의 SetPlayerObject 등록 이후 동기화 지연을 고려하여 한 프레임 뒤에 실행됩니다.
+    /// </summary>
+    /// <returns>코루틴 대기를 위한 IEnumerator</returns>
+    private IEnumerator RebuildPlayerCharactersNextFrame()
+    {
+        yield return null;
+
+        playerCharacters.Clear();
+
+        foreach (var player in Runner.ActivePlayers)
+        {
+            if (Runner.TryGetPlayerObject(player, out var obj))
+            {
+                playerCharacters.Add(obj);
+            }
+            else
+            {
+                Debug.LogWarning($"[Client] Player {player.PlayerId}의 오브젝트를 찾을 수 없습니다.");
+            }
+        }
+
+        Debug.Log($"[Client] playerCharacters 복구 완료: {playerCharacters.Count}개");
     }
     #endregion
 

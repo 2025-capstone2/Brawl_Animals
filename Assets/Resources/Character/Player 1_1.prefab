@@ -92,6 +92,7 @@ MonoBehaviour:
   AttackDamage: 30
   skill: {fileID: 11400000, guid: 6de4f0bd562dab5428573255c0406f05, type: 2}
   firePoint: {fileID: 2121775484220535461}
+  networkObject: {fileID: 5622140301583662809}
 --- !u!114 &5622140301583662809
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -109,6 +110,7 @@ MonoBehaviour:
   Flags: 262145
   NestedObjects: []
   NetworkedBehaviours:
+  - {fileID: 3317617978666817901}
   - {fileID: 952355318055887179}
   - {fileID: 2631188256620354680}
   - {fileID: 4939370475143424285}
