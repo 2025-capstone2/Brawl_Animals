@@ -47,6 +47,7 @@ GameObject:
   - component: {fileID: 2631188256620354680}
   - component: {fileID: 4766023089377507787}
   - component: {fileID: 4939370475143424285}
+  - component: {fileID: 5874441066245101264}
   m_Layer: 0
   m_Name: Player 1_1
   m_TagString: Untagged
@@ -67,8 +68,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 2121775484220535461}
   - {fileID: 5845428024074754828}
+  - {fileID: 2121775484220535461}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &3317617978666817901
@@ -158,6 +159,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   kcc: {fileID: 4939370475143424285}
   character: {fileID: 3317617978666817901}
+  characterModel: {fileID: 0}
   moveSpeed: 5
   jumpImpulse: 10
   upGravity: -25
@@ -242,6 +244,14 @@ MonoBehaviour:
     StepRequireGroundTarget: 0
     SnapDistance: 0.25
     SnapSpeed: 4
+--- !u!33 &5874441066245101264
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4018240343111223314}
+  m_Mesh: {fileID: 0}
 --- !u!1001 &5845428024074355074
 PrefabInstance:
   m_ObjectHideFlags: 0

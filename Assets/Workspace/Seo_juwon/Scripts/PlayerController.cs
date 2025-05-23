@@ -11,6 +11,7 @@ public class PlayerController : NetworkBehaviour
 {
     public SimpleKCC kcc; // SimpleKCC 컴포넌트
     public Character character; //캐릭터 구분
+    public Transform model;
 
     [Header("Movement Settings")]
     public float moveSpeed = 10f; // 이동 속도
@@ -27,20 +28,29 @@ public class PlayerController : NetworkBehaviour
 
     public override void FixedUpdateNetwork()
     {
-        //GetInput 받아오지 못했을 때
-        if (!GetInput<NetworkInputData>(out var inputData))
-        {
+        // 자기 캐릭터만 조작
+        if (!HasStateAuthority || !GetInput<NetworkInputData>(out var inputData))
             return;
-        }
         // 방향 입력
-        Vector3 inputDirection = kcc.TransformRotation * new Vector3(inputData.moveInput.x, 0, inputData.moveInput.y);
-        inputDirection.Normalize();
+        Vector3 inputDir = new Vector3(inputData.moveInput.x, 0, inputData.moveInput.y);
+        inputDir.Normalize();
 
+        // 회전 적용
+        if (inputDir.sqrMagnitude >= 0.01f)
+        {
+            inputDir.Normalize();
+
+            Quaternion targetRot = Quaternion.LookRotation(inputDir);
+            kcc.SetLookRotation(targetRot);
+
+            if (model != null)
+                model.rotation = targetRot;
+        }
         // 중력 적용
         kcc.SetGravity(kcc.RealVelocity.y >= 0f ? upGravity : downGravity);
-
+        
         // 이동 속도 계산
-        Vector3 desiredVelocity = inputDirection * moveSpeed;
+        Vector3 desiredVelocity = kcc.TransformRotation * inputDir * moveSpeed;
 
         if (kcc.ProjectOnGround(desiredVelocity, out Vector3 projected))
         {
@@ -53,19 +63,15 @@ public class PlayerController : NetworkBehaviour
             : (kcc.IsGrounded ? groundAcceleration : airAcceleration);
 
         moveVelocity = Vector3.Lerp(moveVelocity, desiredVelocity, accel * Runner.DeltaTime);
-
         // 실제 이동
         kcc.Move(moveVelocity);
         if (inputData.skill)
         {
             character.UseSkill();  // 각 캐릭터마다 고유 스킬 사용
         }
-        if (GetInput(out NetworkInputData data))
+        if (inputData.attack)
         {
-            if (data.attack)
-            {
-                character.TryAttack(); //공격
-            }
+            character.TryAttack(); //공격
         }
     }
 }
