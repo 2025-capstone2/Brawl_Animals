@@ -38,7 +38,6 @@ public class PlayerController : NetworkBehaviour
     {
         if (!GetInput<NetworkInputData>(out var inputData))
         {
-            Debug.Log("[INPUT] 입력 없음");
             return;
         }
         // 방향 입력

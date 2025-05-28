@@ -54,23 +54,6 @@ public class Character : NetworkBehaviour
         gameObject.SetActive(false);
     }
 
-    public void UseSkill()
-    {
-        if (!HasInputAuthority) return;
-
-        if (skill == null || isUsingSkill)
-        {
-            Debug.LogWarning("스킬이 없거나 사용 중");
-            return;
-        }
-
-        if (!CanSkill())
-            return;
-
-        RPC_ExecuteSkill();
-        lastSkill = Time.time;
-    }
-
     private bool CanSkill()
     {
         if (Time.time < lastSkill + skill.cooltime)
@@ -132,7 +115,22 @@ public class Character : NetworkBehaviour
             animator.SetTrigger("Attack");
     }
 
-    [Rpc(RpcSources.InputAuthority, RpcTargets.All)]
+    public void UseSkill()
+    {
+        if (!HasInputAuthority) return;
+        if (!CanSkill()) return;
+
+        RPC_RequestSkill();
+        lastSkill = Time.time;
+    }
+
+    [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
+    private void RPC_RequestSkill()
+    {
+        RPC_ExecuteSkill();
+    }
+
+    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
     private void RPC_ExecuteSkill()
     {
         if (skill == null || firePoint == null)
@@ -140,10 +138,8 @@ public class Character : NetworkBehaviour
             Debug.LogWarning("[Character] Skill 또는 firePoint 누락");
             return;
         }
-        if (HasStateAuthority)
-        {
-            skill.Execute(this, Runner, Object.InputAuthority);
-        }
+
+        skill.Execute(this, Runner, Object.InputAuthority); // 여기서 Runner.Spawn()
     }
 
     private void OnDrawGizmosSelected()

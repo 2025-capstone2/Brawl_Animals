@@ -4870,6 +4870,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   owner: {fileID: 4018240343111223314, guid: 51921b251958b4242a51fbfcc8b63002, type: 3}
+  followTarget: {fileID: 891553516435649415, guid: 51921b251958b4242a51fbfcc8b63002,
+    type: 3}
 --- !u!114 &-1290104460797440915
 MonoBehaviour:
   m_ObjectHideFlags: 0
