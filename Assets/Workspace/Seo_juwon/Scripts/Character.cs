@@ -1,12 +1,13 @@
+using Fusion;
 using UnityEngine;
 
-public class Character : MonoBehaviour
+public class Character : NetworkBehaviour
 {
     public string characterName;
-    public Animator animator; //공격 모션
+    public Animator animator;
     public int maxHp = 1000;
     public int currentHp = 1000;
-    private float lastSkill = -10f; //시작할 때 바로 사용 가능
+    private float lastSkill = -10f;
     public float AttackCooltime = 1f;
     public float AttackRange = 2f;
     public int AttackDamage = 20;
@@ -17,31 +18,18 @@ public class Character : MonoBehaviour
 
     private void Start()
     {
-        //시작할 때 hp는 max
         currentHp = maxHp;
+
+        if (firePoint == null)
+        {
+            firePoint = transform.Find("FirePoint");
+            if (firePoint == null)
+                Debug.LogError("[Character] firePoint is null!");
+        }
+
         Debug.Log($"{characterName} HP: {currentHp}");
     }
 
-    //피해를 입었을 때
-    public void TakeDamage(int amount)
-    {
-        //현재 hp에서 amount만큼 깎임
-        currentHp -= amount;
-        Debug.Log($"{characterName} 피해 입음: {amount}, 남은 HP: {currentHp}");
-        //hp가 0이 되면 사망
-        if (currentHp <= 0)
-        {
-            Die();
-        }
-    }
-
-    public void Die()
-    {
-        Debug.Log($"{characterName} 사망");
-        //죽으면 오브젝트 사라짐
-        gameObject.SetActive(false);
-    }
-    //맵 아래로 떨어졌을 때
     private void Update()
     {
         if (transform.position.y < -10f)
@@ -50,26 +38,39 @@ public class Character : MonoBehaviour
             Die();
         }
     }
-    //스킬 사용
+
+    public void TakeDamage(int amount)
+    {
+        currentHp -= amount;
+        Debug.Log($"{characterName} 피해 입음: {amount}, 남은 HP: {currentHp}");
+
+        if (currentHp <= 0)
+            Die();
+    }
+
+    public void Die()
+    {
+        Debug.Log($"{characterName} 사망");
+        gameObject.SetActive(false);
+    }
+
     public void UseSkill()
     {
-        if (skill == null)
+        if (!HasInputAuthority) return;
+
+        if (skill == null || isUsingSkill)
         {
-            Debug.LogWarning("스킬이 연결되어 있지 않음");
+            Debug.LogWarning("스킬이 없거나 사용 중");
             return;
         }
-        if (isUsingSkill)
-        {
-            Debug.Log("스킬 사용 중");
-            return;
-        }
+
         if (!CanSkill())
             return;
 
-        skill.Execute(this);
+        RPC_ExecuteSkill();
         lastSkill = Time.time;
     }
-    //쿨타임 확인
+
     private bool CanSkill()
     {
         if (Time.time < lastSkill + skill.cooltime)
@@ -81,6 +82,21 @@ public class Character : MonoBehaviour
 
         return true;
     }
+
+    public void TryAttack()
+    {
+        if (!HasInputAuthority) return;
+
+        if (isUsingSkill || !CanAttack())
+            return;
+
+        RPC_PlayAttackAnimation();
+        ExecuteAttack();
+        lastAttack = Time.time;
+
+        Debug.Log($"{characterName} 공격함");
+    }
+
     private bool CanAttack()
     {
         if (Time.time < lastAttack + AttackCooltime)
@@ -92,30 +108,13 @@ public class Character : MonoBehaviour
 
         return true;
     }
-    public void TryAttack()
-    {
-        if (isUsingSkill)
-        {
-            Debug.Log("스킬 중에는 공격할 수 없음");
-            return;
-        }
-        if (!CanAttack())
-            return;
-        if (animator != null)
-        {
-            animator.SetTrigger("Attack");
-        }
-        ExecuteAttack();
-        lastAttack = Time.time;
-        Debug.Log($"{characterName} 공격함");
-    }
-    // <summary>
-    /// 실제 기본 공격 로직
-    /// </summary>
+
     private void ExecuteAttack()
     {
+        if (firePoint == null) return;
+
         Collider[] hits = Physics.OverlapSphere(firePoint.position, AttackRange);
-        
+
         foreach (var hit in hits)
         {
             Character enemy = hit.GetComponentInParent<Character>();
@@ -126,7 +125,27 @@ public class Character : MonoBehaviour
             }
         }
     }
-    //공격 범위 테스트용
+    [Rpc(RpcSources.All, RpcTargets.All)]
+    private void RPC_PlayAttackAnimation()
+    {
+        if (animator != null)
+            animator.SetTrigger("Attack");
+    }
+
+    [Rpc(RpcSources.InputAuthority, RpcTargets.All)]
+    private void RPC_ExecuteSkill()
+    {
+        if (skill == null || firePoint == null)
+        {
+            Debug.LogWarning("[Character] Skill 또는 firePoint 누락");
+            return;
+        }
+        if (HasStateAuthority)
+        {
+            skill.Execute(this, Runner, Object.InputAuthority);
+        }
+    }
+
     private void OnDrawGizmosSelected()
     {
         if (firePoint != null)

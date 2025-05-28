@@ -1,21 +1,14 @@
 using UnityEngine;
-/// <summary>
-/// [ScriptableObject 기반의 예시 스킬 클래스]
-/// </summary>
+using System.Collections;
+using Fusion;
+
 [CreateAssetMenu(menuName = "Skill/WaterSpray")]
 public class WaterSpray : Skill
 {
-    [Header("Water Spray Settings")]
-    /// <summary>
-    /// 인스펙터에서 연결하는 particle prefab 필요
-    /// 발동 시 이 prefab이 firePoint에 붙는다.
-    /// firepoint는 캐릭터 손 위치나 발사 위치. player 자식 컴포넌트로 추가
-    /// Particle System(또는 스킬이 될 prefab) + [Skill]Controller를 포함해야 함
-    /// </summary>
-    public GameObject sprayPrefab;
-    public float lifetime = 3f; // 파티클 시각적 유지 시간 (duration은 스킬 자체 지속 시간)
+    public NetworkObject sprayPrefab;
+    public float lifetime = 3f;
 
-    public override void Execute(Character user)
+    public override void Execute(Character user, NetworkRunner runner, PlayerRef authority)
     {
         if (sprayPrefab == null || user == null || user.firePoint == null)
         {
@@ -23,16 +16,21 @@ public class WaterSpray : Skill
             return;
         }
 
-        GameObject spray = Instantiate(sprayPrefab, user.firePoint.position, user.firePoint.rotation);
-        spray.transform.SetParent(user.firePoint); //캐릭터가 회전할 때 같이 움직이도록 함
+        NetworkObject prefabNetObj = sprayPrefab.GetComponent<NetworkObject>();
 
-        // 소유자 정보 넘겨서 본인은 데미지를 받지 않게 함
-        var controller = spray.GetComponent<WaterSprayController>();
+        if (prefabNetObj == null)
+        {
+            Debug.LogWarning("NetworkObject 컴포넌트가 sprayPrefab에 없음");
+            return;
+        }
+
+        NetworkObject sprayObj = runner.Spawn(prefabNetObj, user.firePoint.position, user.firePoint.rotation, authority);
+
+        WaterSprayController controller = sprayObj.GetComponent<WaterSprayController>();
         if (controller != null)
         {
             controller.owner = user.gameObject;
+            // controller에서 Despawn Coroutine 자동 실행
         }
-
-        Destroy(spray, lifetime); // 일정 시간 후 파괴
     }
 }

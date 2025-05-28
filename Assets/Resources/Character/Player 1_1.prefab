@@ -110,6 +110,7 @@ MonoBehaviour:
   Flags: 262145
   NestedObjects: []
   NetworkedBehaviours:
+  - {fileID: 3317617978666817901}
   - {fileID: 952355318055887179}
   - {fileID: 2631188256620354680}
   - {fileID: 4939370475143424285}
@@ -159,7 +160,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   kcc: {fileID: 4939370475143424285}
   character: {fileID: 3317617978666817901}
-  characterModel: {fileID: 0}
+  model: {fileID: 0}
   moveSpeed: 5
   jumpImpulse: 10
   upGravity: -25
