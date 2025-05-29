@@ -824,7 +824,7 @@ MonoBehaviour:
   runnerPrefab: {fileID: 1755368848}
   _runner: {fileID: 1755368848}
   _currentSessionName: Game
-  _isHost: 0
+  _isHost: 1
 --- !u!1 &1719807575
 GameObject:
   m_ObjectHideFlags: 0
