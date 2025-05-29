@@ -24,7 +24,7 @@ public class Character : NetworkBehaviour
         {
             firePoint = transform.Find("FirePoint");
             if (firePoint == null)
-                Debug.LogError("[Character] firePoint is null!");
+                Debug.LogError("[Character] 발사 위치 없음");
         }
 
         Debug.Log($"{characterName} HP: {currentHp}");
@@ -51,6 +51,7 @@ public class Character : NetworkBehaviour
     public void Die()
     {
         Debug.Log($"{characterName} 사망");
+        //플레이어 사망 동기화로 수정해야 함
         gameObject.SetActive(false);
     }
 

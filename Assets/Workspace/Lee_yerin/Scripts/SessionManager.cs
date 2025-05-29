@@ -136,7 +136,7 @@ public class SessionManager : MonoBehaviour
                 SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>(),
                 Scene = null,
             });
-            Debug.Log($"▶️ StartGame 시작: {_isHost}, 이름: {_currentSessionName}");
+            Debug.Log($"StartGame 시작: {_isHost}, 이름: {_currentSessionName}");
             if (result.Ok)
             {
                 Debug.Log("SessionManager - 세션 조인 성공!");
