@@ -22,6 +22,14 @@ public class Character : NetworkBehaviour
     {
         //시작할 때 hp는 max
         currentHp = maxHp;
+
+        if (firePoint == null)
+        {
+            firePoint = transform.Find("FirePoint");
+            if (firePoint == null)
+                Debug.LogError("[Character] firePoint is null!");
+        }
+
         Debug.Log($"{characterName} HP: {currentHp}");
     }
 
@@ -73,7 +81,13 @@ public class Character : NetworkBehaviour
         skill.Execute(this);
         lastSkill = Time.time;
     }
-    //쿨타임 확인
+
+    public void Die()
+    {
+        Debug.Log($"{characterName} 사망");
+        gameObject.SetActive(false);
+    }
+
     private bool CanSkill()
     {
         if (Time.time < lastSkill + skill.cooltime)

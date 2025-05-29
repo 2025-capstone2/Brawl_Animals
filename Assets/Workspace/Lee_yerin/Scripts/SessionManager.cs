@@ -132,7 +132,6 @@ public class SessionManager : MonoBehaviour
                 SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>(),
                 Scene = null,
             });
-
             if (result.Ok)
             {
                 Debug.Log("SessionManager - 세션 조인 성공!");
