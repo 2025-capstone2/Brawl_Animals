@@ -23,21 +23,16 @@ public class WaterSpray : Skill
             return;
         }
 
-        NetworkObject prefabNetObj = sprayPrefab.GetComponent<NetworkObject>();
+        GameObject spray = Instantiate(sprayPrefab, user.firePoint.position, user.firePoint.rotation);
+        spray.transform.SetParent(user.firePoint); //캐릭터가 회전할 때 같이 움직이도록 함
 
-        if (prefabNetObj == null)
-        {
-            Debug.LogWarning("NetworkObject 컴포넌트가 sprayPrefab에 없음");
-            return;
-        }
-
-        NetworkObject sprayObj = runner.Spawn(prefabNetObj, user.firePoint.position, user.firePoint.rotation, authority);
-
-        WaterSprayController controller = sprayObj.GetComponent<WaterSprayController>();
+        // 소유자 정보 넘겨서 본인은 데미지를 받지 않게 함
+        var controller = spray.GetComponent<WaterSprayController>();
         if (controller != null)
         {
             controller.owner = user.gameObject;
-            // controller에서 Despawn Coroutine 자동 실행
         }
+
+        Destroy(spray, lifetime); // 일정 시간 후 파괴
     }
 }

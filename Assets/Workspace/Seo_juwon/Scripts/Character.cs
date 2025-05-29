@@ -1,7 +1,6 @@
-using Fusion;
 using UnityEngine;
 
-public class Character : NetworkBehaviour
+public class Character : MonoBehaviour
 {
     public string characterName;
     public Animator animator; //공격 모션
@@ -22,14 +21,6 @@ public class Character : NetworkBehaviour
     {
         //시작할 때 hp는 max
         currentHp = maxHp;
-
-        if (firePoint == null)
-        {
-            firePoint = transform.Find("FirePoint");
-            if (firePoint == null)
-                Debug.LogError("[Character] firePoint is null!");
-        }
-
         Debug.Log($"{characterName} HP: {currentHp}");
     }
 
@@ -81,30 +72,7 @@ public class Character : NetworkBehaviour
         skill.Execute(this);
         lastSkill = Time.time;
     }
-
-    public void Die()
-    {
-        Debug.Log($"{characterName} 사망");
-        gameObject.SetActive(false);
-    }
-
-    public void UseSkill()
-    {
-        if (!HasInputAuthority) return;
-
-        if (skill == null || isUsingSkill)
-        {
-            Debug.LogWarning("스킬이 없거나 사용 중");
-            return;
-        }
-
-        if (!CanSkill())
-            return;
-
-        RPC_ExecuteSkill();
-        lastSkill = Time.time;
-    }
-
+    //쿨타임 확인
     private bool CanSkill()
     {
         if (Time.time < lastSkill + skill.cooltime)
@@ -161,27 +129,7 @@ public class Character : NetworkBehaviour
             }
         }
     }
-    [Rpc(RpcSources.All, RpcTargets.All)]
-    private void RPC_PlayAttackAnimation()
-    {
-        if (animator != null)
-            animator.SetTrigger("Attack");
-    }
-
-    [Rpc(RpcSources.InputAuthority, RpcTargets.All)]
-    private void RPC_ExecuteSkill()
-    {
-        if (skill == null || firePoint == null)
-        {
-            Debug.LogWarning("[Character] Skill 또는 firePoint 누락");
-            return;
-        }
-        if (HasStateAuthority)
-        {
-            skill.Execute(this, Runner, Object.InputAuthority);
-        }
-    }
-
+    //공격 범위 테스트용
     private void OnDrawGizmosSelected()
     {
         if (firePoint != null)

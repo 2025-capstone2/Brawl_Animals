@@ -128,7 +128,6 @@ MonoBehaviour:
   Flags: 262145
   NestedObjects: []
   NetworkedBehaviours:
-  - {fileID: 3317617978666817901}
   - {fileID: 952355318055887179}
   - {fileID: 8041304104161485888}
   - {fileID: -4294851122239989272}
@@ -225,6 +224,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 98f2ef66dee584f45877186636b9df8d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _stateAuthorityChangeErrorCorrectionDelta: 1
+  SyncScale: 0
+  SyncParent: 0
+  _autoAOIOverride: 1
+  DisableSharedModeInterpolation: 0
 --- !u!114 &-4294851122239989272
 MonoBehaviour:
   m_ObjectHideFlags: 0
