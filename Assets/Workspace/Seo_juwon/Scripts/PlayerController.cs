@@ -33,6 +33,7 @@ public class PlayerController : NetworkBehaviour
     {
         if (!HasInputAuthority || !GetInput<NetworkInputData>(out var inputData))
         {
+            Debug.Log("[INPUT] 입력 없음");
             return;
         }
 
