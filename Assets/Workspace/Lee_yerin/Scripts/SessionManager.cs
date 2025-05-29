@@ -97,13 +97,12 @@ public class SessionManager : MonoBehaviour
             if (!result.Ok)
             {
                 Debug.LogError($"StartGame 실패 → Ok: {result.Ok}, ShutdownReason: {result.ShutdownReason}, ErrorMessage: {result.ErrorMessage}");
-                _runner.ProvideInput = true;
                 return;
             }
 
             Debug.Log("StartGame 성공");
         }
-        if(!_isHost)
+        else
         {
             Debug.Log("클라이언트");
             // Client인 경우 방 조인 시도 (대기 포함)
@@ -113,10 +112,7 @@ public class SessionManager : MonoBehaviour
             {
                 Debug.LogError("SessionManager - 세션 조인 실패 (모든 재시도 실패)");
                 // TODO... 실패 처리 (로비로 복귀 등)
-                return;
             }
-            _runner.ProvideInput = true;
-            Debug.Log("클라이언트 ProvideInput 설정 완료");
         }
     }
 
@@ -136,11 +132,10 @@ public class SessionManager : MonoBehaviour
                 SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>(),
                 Scene = null,
             });
-            Debug.Log($"▶️ StartGame 시작: {_isHost}, 이름: {_currentSessionName}");
+
             if (result.Ok)
             {
                 Debug.Log("SessionManager - 세션 조인 성공!");
-                _runner.ProvideInput = true;
                 return true;
             }
             else

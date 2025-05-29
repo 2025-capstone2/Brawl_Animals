@@ -173,7 +173,6 @@ MonoBehaviour:
   Flags: 262145
   NestedObjects: []
   NetworkedBehaviours:
-  - {fileID: 3317617978666817901}
   - {fileID: 952355318055887179}
   - {fileID: 2631188256620354680}
   - {fileID: 4939370475143424285}
