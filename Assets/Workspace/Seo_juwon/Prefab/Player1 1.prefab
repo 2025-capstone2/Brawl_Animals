@@ -18,6 +18,7 @@ GameObject:
   - component: {fileID: 5699380459216588828}
   - component: {fileID: 7967689864182096193}
   - component: {fileID: 4522118908284164683}
+  - component: {fileID: 1091822612717700149}
   m_Layer: 0
   m_Name: Player1 1
   m_TagString: Untagged
@@ -170,6 +171,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   kcc: {fileID: 0}
   character: {fileID: 0}
+  model: {fileID: 0}
   moveSpeed: 5
   jumpImpulse: 10
   upGravity: -25
@@ -199,6 +201,7 @@ MonoBehaviour:
   AttackDamage: 20
   skill: {fileID: 0}
   firePoint: {fileID: 0}
+  currentStage: {fileID: 0}
 --- !u!114 &7967689864182096193
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -218,6 +221,7 @@ MonoBehaviour:
   NetworkedBehaviours:
   - {fileID: 862801129570647655}
   - {fileID: 5699380459216588828}
+  - {fileID: 1091822612717700149}
   ForceRemoteRenderTimeframe: 0
 --- !u!54 &4522118908284164683
 Rigidbody:
@@ -246,6 +250,23 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &1091822612717700149
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4669635777511113111}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 158639473, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _stateAuthorityChangeErrorCorrectionDelta: 0
+  SyncScale: 0
+  SyncParent: 0
+  _autoAOIOverride: 1
+  DisableSharedModeInterpolation: 0
 --- !u!1 &9122269495623743604
 GameObject:
   m_ObjectHideFlags: 0
