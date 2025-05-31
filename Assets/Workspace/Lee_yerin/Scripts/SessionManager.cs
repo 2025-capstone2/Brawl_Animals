@@ -112,7 +112,10 @@ public class SessionManager : MonoBehaviour
             {
                 Debug.LogError("SessionManager - 세션 조인 실패 (모든 재시도 실패)");
                 // TODO... 실패 처리 (로비로 복귀 등)
+                return;
             }
+            _runner.ProvideInput = true;
+            Debug.Log("클라이언트 ProvideInput 설정 완료");
         }
     }
 
@@ -136,6 +139,7 @@ public class SessionManager : MonoBehaviour
             if (result.Ok)
             {
                 Debug.Log("SessionManager - 세션 조인 성공!");
+                _runner.ProvideInput = true;
                 return true;
             }
             else

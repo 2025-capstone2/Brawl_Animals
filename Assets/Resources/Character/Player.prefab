@@ -127,6 +127,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   kcc: {fileID: 0}
   character: {fileID: 0}
+  model: {fileID: 0}
   moveSpeed: 5
   jumpImpulse: 10
   upGravity: -25

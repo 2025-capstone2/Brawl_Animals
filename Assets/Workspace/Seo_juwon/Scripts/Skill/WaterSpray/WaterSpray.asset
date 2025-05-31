@@ -12,9 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 73202113b7a6ca54b9b25a6aff7975fe, type: 3}
   m_Name: WaterSpray
   m_EditorClassIdentifier: 
-  skillName: WaterSpray
-  duration: 0
   cooltime: 5
-  sprayPrefab: {fileID: 8650032775753707512, guid: 269cb125d24b741488a294ced27f648f,
+  sprayPrefab: {fileID: -1290104460797440915, guid: 269cb125d24b741488a294ced27f648f,
     type: 3}
   lifetime: 3
