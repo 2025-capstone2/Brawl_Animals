@@ -867,7 +867,7 @@ PrefabInstance:
     - target: {fileID: 4411270392797867574, guid: 7829ffac68ffe624cb6f2fdd3f39003d,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.342
+      value: 0.37200022
       objectReference: {fileID: 0}
     - target: {fileID: 4411270392797867574, guid: 7829ffac68ffe624cb6f2fdd3f39003d,
         type: 3}
@@ -1070,7 +1070,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bc1195693939d61498818f37eade9587, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  roomSceneName: 
+  roomSceneName: Demo_Room_Scene
 --- !u!4 &1119372484
 Transform:
   m_ObjectHideFlags: 0
@@ -1314,7 +1314,7 @@ PrefabInstance:
     - target: {fileID: 7038114840533862826, guid: 38844ef9b5b2c4740aa901572445add5,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.105
+      value: 0.1350002
       objectReference: {fileID: 0}
     - target: {fileID: 7038114840533862826, guid: 38844ef9b5b2c4740aa901572445add5,
         type: 3}
@@ -1712,7 +1712,7 @@ PrefabInstance:
     - target: {fileID: 3596084938220571016, guid: 41fbcb3b00b257e46a2402b8cef5fdbb,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.88999987
+      value: 0.92
       objectReference: {fileID: 0}
     - target: {fileID: 3596084938220571016, guid: 41fbcb3b00b257e46a2402b8cef5fdbb,
         type: 3}

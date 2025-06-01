@@ -68,20 +68,20 @@ public class GameManager : NetworkBehaviour
             return;
         }
 
-        int[] chosenStages = new int[MIN_STAGE_COUNT];
+        List<int> chosenStages = new ();
 
         for (int i = 0; i < MIN_STAGE_COUNT; i++)
         {
             int stageNum = Random.Range(0, selectableStages.Count);
 
             // 중복되지 않는 스테이지 선택
-            while (selectedStages.Contains(selectableStages[stageNum]))
+            while (chosenStages.Contains(stageNum))
                 stageNum = Random.Range(0, selectableStages.Count);
 
-            chosenStages[i] = stageNum;
+            chosenStages.Add(stageNum);
         }
 
-        RPC_BroadcastSelectedStages(chosenStages);
+        RPC_BroadcastSelectedStages(chosenStages.ToArray());
     }
 
     /// <summary>
