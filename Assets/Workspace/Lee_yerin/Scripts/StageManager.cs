@@ -109,7 +109,7 @@ public class StageManager : NetworkBehaviour
             yield return StartCoroutine(OnStageUpdate(count));
 
             // 스테이지에 단 한 명의 플레이어만 남았다면, 스테이지 종료
-            /*if (alivePlayers.Count == 1)
+            if (alivePlayers.Count == 1)
             {
                 Debug.Log("최후의 플레이어 탄생! 게임 스테이지를 종료합니다~");
                 stageLogic = null;
@@ -118,7 +118,7 @@ public class StageManager : NetworkBehaviour
                 yield return StartCoroutine(OnStageEnd());
                 gameManager.ProcessStageCompletion();
                 yield break;
-            }*/
+            }
             Debug.Log($"현재 스테이지 종료까지 남은 시간 : {stageTime - count}");   // 남은 시간 출력
             count += 1; // 타이머 카운트 1 증가
             // 타이머 1초씩 증가

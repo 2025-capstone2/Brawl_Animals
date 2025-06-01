@@ -1,6 +1,7 @@
 using Fusion;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -71,9 +72,12 @@ public class GraveyardStageManager : StageManager
         closestCandidates.Clear();
         currentTarget.Clear();
 
-        if (HasStateAuthority)
+        if (HasStateAuthority)  // Host일 때
             foreach (GhostAI ghost in ghostAI)
+            {
+                yield return new WaitUntil(() => ghost.DespawnTombs()); // 생성해둔 무덤 오브젝트 Despawn
                 Runner.Despawn(ghost.GhostNetObj);  // 고스트 Despawn
+            }
 
         ghostAI.Clear();
 
@@ -92,6 +96,7 @@ public class GraveyardStageManager : StageManager
         for (int i = 0; i < ghostAI.Count; i++)
         {
             float closestDist = float.MaxValue;
+            Character character = null;
 
             // 모든 생존 플레이어를 순회
             foreach (var player in AlivePlayers)
@@ -103,8 +108,11 @@ public class GraveyardStageManager : StageManager
                     closestDist = dist;
                     // 가장 가까운 플레이어를 현재 후보로 설정
                     closestCandidates[i] = player.Value;
+                    character = player.Key;
                 }
             }
+
+            ghostAI[i].currentTarget = character;   // 고스트가 쫓고 있는 캐릭터의 Character 저장 (Die 메서드 호출을 위해)
         }
 
         // 계산된 타겟 후보를 현재 타겟으로 적용
