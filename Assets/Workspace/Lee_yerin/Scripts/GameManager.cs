@@ -21,6 +21,9 @@ public class GameManager : NetworkBehaviour
 
     [SerializeField] public List<NetworkObject> playerCharacters;
     [SerializeField] PlayerSpawner playerSpawner;
+
+    [Header("UI")]
+    [SerializeField] GameObject finishUI;
     #endregion
 
     #region Unity Event
@@ -184,14 +187,24 @@ public class GameManager : NetworkBehaviour
     /// </summary>
     public void ProcessStageCompletion()
     {
-        if (Runner.IsServer && HasStateAuthority && ongoingStage + 1 < MIN_STAGE_COUNT)
+        if (!(Runner.IsServer && HasStateAuthority))
+            return;
+
+        if (ongoingStage + 1 < MIN_STAGE_COUNT)
             RpcMoveNextStage();    // 다음 스테이지 이동
         else
         {
             // TODO... 추가 스테이지를 진행해야 하는지 여부 결정하는 로직 구현
             Debug.Log("게임 종료");
+            RpcFinishUI();  // 게임 종료 UI
             // TODO... 게임 종료 후 로직 구현
         }
+    }
+
+    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+    private void RpcFinishUI()
+    {
+        finishUI.SetActive(true);
     }
     #endregion
 
