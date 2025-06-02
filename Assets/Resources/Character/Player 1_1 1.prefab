@@ -111,7 +111,7 @@ GameObject:
   - component: {fileID: 4939370475143424285}
   - component: {fileID: 6153917505316349898}
   m_Layer: 0
-  m_Name: Rooster
+  m_Name: Player 1_1 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -174,7 +174,6 @@ MonoBehaviour:
   Flags: 262145
   NestedObjects: []
   NetworkedBehaviours:
-  - {fileID: 3317617978666817901}
   - {fileID: 952355318055887179}
   - {fileID: 2631188256620354680}
   - {fileID: 4939370475143424285}
