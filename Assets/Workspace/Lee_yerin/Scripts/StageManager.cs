@@ -5,6 +5,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using System.Linq;
 using Fusion.Addons.SimpleKCC;
+using TMPro;
 
 /// <summary>
 /// 개발자: 이예린
@@ -32,6 +33,9 @@ public class StageManager : NetworkBehaviour
     [Tooltip("플레이어들 스폰 위치 List")]
     [SerializeField] List<Transform> playersSpawnPoints;
     public List<Transform> PlayersSpawnPoints => playersSpawnPoints;
+
+    [Header("UI")]
+    [SerializeField] TMP_Text leftTimeText;
 
     Coroutine stageLogic = null;    // 스테이지 로직을 실행하는 코루틴 참조
     /// <summary>
@@ -120,6 +124,7 @@ public class StageManager : NetworkBehaviour
                 yield break;
             }
             Debug.Log($"현재 스테이지 종료까지 남은 시간 : {stageTime - count}");   // 남은 시간 출력
+            leftTimeText.text = $"Time : {stageTime - count}";     // 남은 시간 UI로 출력
             count += 1; // 타이머 카운트 1 증가
             // 타이머 1초씩 증가
             yield return new WaitForSecondsRealtime(1f);

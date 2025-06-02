@@ -5,8 +5,9 @@ using UnityEngine.SceneManagement;
 
 public class Test_Start : MonoBehaviour
 {
+    [SerializeField] string roomSceneName;
     public void GoToGameScene()
     {
-        SceneManager.LoadScene("Room_Test_Scene");
+        SceneManager.LoadScene(roomSceneName);
     }
 }
