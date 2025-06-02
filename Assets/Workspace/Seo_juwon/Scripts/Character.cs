@@ -1,6 +1,8 @@
 using Fusion;
 using UnityEngine;
 using System.Collections;
+using TMPro;
+using UnityEngine.UI;
 
 public class Character : NetworkBehaviour
 {
@@ -21,6 +23,10 @@ public class Character : NetworkBehaviour
     private int skillHitCount = 0;
     private float lastSkillHitTime = -10f;
     private bool isStunned = false;
+    [Header("HP UI")]
+    public Slider hpSlider;
+    public Image hpFillImage; // Fill 오브젝트의 Image 컴포넌트
+    public Gradient hpColorGradient;
 
     private void Start()
     {
@@ -32,8 +38,22 @@ public class Character : NetworkBehaviour
             if (firePoint == null)
                 Debug.LogError("[Character] firePoint is null!");
         }
+        UpdateHpUI();
         Debug.Log($"[UseSkill.STARTGAME] Skill 타입: {skill?.GetType().Name}");
         Debug.Log($"{characterName} HP: {currentHp}");
+    }
+    void UpdateHpUI()
+    {
+        if (hpSlider != null)
+        {
+            float value = (float)currentHp / maxHp;
+            hpSlider.value = value;
+
+            if (hpFillImage != null && hpColorGradient != null)
+            {
+                hpFillImage.color = hpColorGradient.Evaluate(value);
+            }
+        }
     }
 
     private void Update()
@@ -49,7 +69,7 @@ public class Character : NetworkBehaviour
     {
         currentHp -= amount;
         Debug.Log($"{characterName} 피해 입음: {amount}, 남은 HP: {currentHp}");
-
+        UpdateHpUI();
         if (currentHp <= 0)
             Die();
     }

@@ -7,7 +7,7 @@ using Fusion;
 public class Rooster : Skill
 {
     public int damage = 10;
-    public float hitInterval = 0.1f;
+    public float hitInterval = 1f;
     public int hitCount = 6;
     public float hitRadius = 1.5f;
     public override void Execute(Character user, NetworkRunner runner, PlayerRef authority)
@@ -17,37 +17,27 @@ public class Rooster : Skill
 
     private IEnumerator HitRoutine(Character user)
     {
-        if (user.animator != null)
-        {
-            for (int i = 0; i < 3; i++)
-            {
-                user.animator.SetTrigger("Skill");
-                yield return null;
-                while (!user.animator.GetCurrentAnimatorStateInfo(0).IsName("Skill"))
-                    yield return null;
-                float animLength = user.animator.GetCurrentAnimatorStateInfo(0).length;
-                yield return new WaitForSeconds(animLength);
-            }
-        }
+        user.isUsingSkill = true; // 스킬 중임 표시
 
         for (int i = 0; i < hitCount; i++)
         {
-            Collider[] hits = Physics.OverlapSphere(user.firePoint.position, hitRadius);
+            // 애니메이션 트리거 (필요하면 제거 가능)
+            if (user.animator != null)
+                user.animator.SetTrigger("Skill");
 
+            // 주변 콜라이더 체크 및 데미지
+            Collider[] hits = Physics.OverlapSphere(user.firePoint.position, hitRadius);
             foreach (var hit in hits)
             {
                 Character enemy = hit.GetComponentInParent<Character>();
                 if (enemy != null && enemy != user)
-                {
                     enemy.OnSkillHit(damage);
-                }
             }
 
-            yield return new WaitForSeconds(hitInterval);
+            yield return new WaitForSeconds(hitInterval); // 0.5초 간격
         }
 
-        if (user.animator != null)
-            user.animator.speed = 1f;
+        user.isUsingSkill = false; // 스킬 종료
     }
     
 }
