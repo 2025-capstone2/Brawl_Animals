@@ -2,7 +2,6 @@ using Fusion;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 /// <summary>
 /// 개발자: 이예린
@@ -12,23 +11,38 @@ using UnityEngine.SceneManagement;
 public class GameManager : NetworkBehaviour
 {
     #region Variables
+    [Header("Game Logic")]
     //TODO... Fusion 연결 후 룸 안에 있는 플레이어 받아와 저장
     [SerializeField] List<StageManager> selectableStages; // 선택 가능한 스테이지 목록
     [SerializeField] List<StageManager> selectedStages;   // 선택된 스테이지 목록
 
     const int MIN_STAGE_COUNT = 3;  // 최소 스테이지 개수
-    [SerializeField] int ongoingStage = -1;   // 현재 진행 중인 스테이지 인덱스
+    [SerializeField] public int ongoingStage = -1;   // 현재 진행 중인 스테이지 인덱스
+
+    [SerializeField] public List<NetworkObject> playerCharacters;
+    [SerializeField] PlayerSpawner playerSpawner;
+
+    [Header("UI")]
+    [SerializeField] GameObject finishUI;
     #endregion
 
     #region Unity Event
     #endregion
 
     #region Game Logic
+    public void InitializeStagesAndStart()
+    {
+        RPC_InitializeStagesAndStart();
+    }
+
     /// <summary>
     /// 게임을 초기화하고 첫 번째 스테이지를 시작하는 메서드
     /// </summary>
-    public void InitializeStagesAndStart()
+    [Rpc(RpcSources.StateAuthority, RpcTargets.All, HostMode = RpcHostMode.SourceIsServer)]
+    public void RPC_InitializeStagesAndStart()
     {
+        playerSpawner = Runner.gameObject.GetComponent<PlayerSpawner>();
+
         // 서버이자 해당 NetworkObject의 StateAuthority를 가진 경우에만 실행
         if (!(Runner.IsServer && HasStateAuthority))
             return;
@@ -36,7 +50,9 @@ public class GameManager : NetworkBehaviour
         Debug.Log("InitializeStagesAndStart");
 
         SelectRandomUniqueStage();  // 랜덤으로 스테이지 선택
+
         RpcMoveNextStage(); // 첫 번째 스테이지로 이동
+        Debug.Log(playerCharacters.Count);
     }
 
     /// <summary>
@@ -55,20 +71,20 @@ public class GameManager : NetworkBehaviour
             return;
         }
 
-        int[] chosenStages = new int[MIN_STAGE_COUNT];
+        List<int> chosenStages = new ();
 
         for (int i = 0; i < MIN_STAGE_COUNT; i++)
         {
             int stageNum = Random.Range(0, selectableStages.Count);
 
             // 중복되지 않는 스테이지 선택
-            while (selectedStages.Contains(selectableStages[stageNum]))
+            while (chosenStages.Contains(stageNum))
                 stageNum = Random.Range(0, selectableStages.Count);
 
-            chosenStages[i] = stageNum;
+            chosenStages.Add(stageNum);
         }
 
-        RPC_BroadcastSelectedStages(chosenStages);
+        RPC_BroadcastSelectedStages(chosenStages.ToArray());
     }
 
     /// <summary>
@@ -103,14 +119,65 @@ public class GameManager : NetworkBehaviour
 
         // 이전 스테이지가 존재하면 비활성화
         if (ongoingStage >= 0 && ongoingStage < selectedStages.Count)
-            selectedStages[ongoingStage].gameObject.SetActive(false);
-        
+        {
+            selectedStages[ongoingStage].ActivateStage(false);
+
+            foreach (NetworkObject player in playerCharacters)
+            {
+                Runner.Despawn(player);
+            }
+        }
+
         // 다음 스테이지로 진행
         ongoingStage++;
 
         // 다음 스테이지가 존재하면 활성화
         if (ongoingStage < selectedStages.Count)
-            selectedStages[ongoingStage].gameObject.SetActive(true);
+            selectedStages[ongoingStage].ActivateStage(true);
+
+        playerCharacters.Clear();
+
+        if (Runner.IsServer)
+        {
+            foreach (NetworkObject character in playerSpawner?.SpawnAllPendingPlayers(selectedStages[ongoingStage].PlayersSpawnPoints))
+            {
+                playerCharacters.Add(character);
+            }
+        }
+        else
+        {
+            // 클라이언트 playerCharacters 동기화 작업 실행
+            StartCoroutine(RebuildPlayerCharactersNextFrame());
+        }
+
+            selectedStages[ongoingStage].StartLogic();  // 스테이지 로직 실행
+    }
+
+    /// <summary>
+    /// 클라이언트에서 Fusion 동기화가 완료된 이후,
+    /// 각 플레이어에 대응하는 NetworkObject를 수집하여 playerCharacters 리스트를 재구성하는 코루틴입니다.
+    /// Fusion의 SetPlayerObject 등록 이후 동기화 지연을 고려하여 한 프레임 뒤에 실행됩니다.
+    /// </summary>
+    /// <returns>코루틴 대기를 위한 IEnumerator</returns>
+    private IEnumerator RebuildPlayerCharactersNextFrame()
+    {
+        yield return null;
+
+        playerCharacters.Clear();
+
+        foreach (var player in Runner.ActivePlayers)
+        {
+            if (Runner.TryGetPlayerObject(player, out var obj))
+            {
+                playerCharacters.Add(obj);
+            }
+            else
+            {
+                Debug.LogWarning($"[Client] Player {player.PlayerId}의 오브젝트를 찾을 수 없습니다.");
+            }
+        }
+
+        Debug.Log($"[Client] playerCharacters 복구 완료: {playerCharacters.Count}개");
     }
     #endregion
 
@@ -120,14 +187,24 @@ public class GameManager : NetworkBehaviour
     /// </summary>
     public void ProcessStageCompletion()
     {
-        if (Runner.IsServer && HasStateAuthority && ongoingStage + 1 < MIN_STAGE_COUNT)
+        if (!(Runner.IsServer && HasStateAuthority))
+            return;
+
+        if (ongoingStage + 1 < MIN_STAGE_COUNT)
             RpcMoveNextStage();    // 다음 스테이지 이동
         else
         {
             // TODO... 추가 스테이지를 진행해야 하는지 여부 결정하는 로직 구현
             Debug.Log("게임 종료");
+            RpcFinishUI();  // 게임 종료 UI
             // TODO... 게임 종료 후 로직 구현
         }
+    }
+
+    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+    private void RpcFinishUI()
+    {
+        finishUI.SetActive(true);
     }
     #endregion
 
