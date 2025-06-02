@@ -21,12 +21,22 @@ public class GameManager : NetworkBehaviour
 
     [SerializeField] public List<NetworkObject> playerCharacters;
     [SerializeField] PlayerSpawner playerSpawner;
+    private Dictionary<PlayerRef, Animal> playerPickList = new();
+    public Dictionary<PlayerRef, Animal> PlayerPickList => playerPickList;
 
     [Header("UI")]
     [SerializeField] GameObject finishUI;
     #endregion
 
     #region Unity Event
+    #endregion
+
+    #region Chracter Pick
+    [Rpc(RpcSources.All, RpcTargets.All)]
+    public void RPCAddPlayerPick(PlayerRef player, int animal)
+    {
+        PlayerPickList.Add(player, (Animal) animal);
+    }
     #endregion
 
     #region Game Logic
@@ -42,6 +52,7 @@ public class GameManager : NetworkBehaviour
     public void RPC_InitializeStagesAndStart()
     {
         playerSpawner = Runner.gameObject.GetComponent<PlayerSpawner>();
+        playerSpawner.playerPickList = playerPickList;
 
         // 서버이자 해당 NetworkObject의 StateAuthority를 가진 경우에만 실행
         if (!(Runner.IsServer && HasStateAuthority))
@@ -127,6 +138,8 @@ public class GameManager : NetworkBehaviour
                 Runner.Despawn(player);
             }
         }
+        else
+            SoundManager.Instance.PlayBGM(bgmClip.game);
 
         // 다음 스테이지로 진행
         ongoingStage++;
@@ -196,15 +209,16 @@ public class GameManager : NetworkBehaviour
         {
             // TODO... 추가 스테이지를 진행해야 하는지 여부 결정하는 로직 구현
             Debug.Log("게임 종료");
-            RpcFinishUI();  // 게임 종료 UI
+            RpcFinishLogic();  // 게임 종료 로직
             // TODO... 게임 종료 후 로직 구현
         }
     }
 
     [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
-    private void RpcFinishUI()
+    private void RpcFinishLogic()
     {
         finishUI.SetActive(true);
+        SoundManager.Instance.PlayBGM(bgmClip.gameEnd);
     }
     #endregion
 
