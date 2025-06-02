@@ -9,9 +9,11 @@ public class Squid : Skill
 
     public override void Execute(Character user, NetworkRunner runner, PlayerRef authority)
     {
-        Debug.Log("Squid.Execute 호출됨");
+        Debug.Log($"[Squid] user: {user.name}, HasInputAuthority: {user.HasInputAuthority}");
+
         if (user.HasInputAuthority)
         {
+            Debug.Log("[Squid]RPC_RequestSquidSkill");
             user.RPC_RequestSquidSkill();
         }
         else

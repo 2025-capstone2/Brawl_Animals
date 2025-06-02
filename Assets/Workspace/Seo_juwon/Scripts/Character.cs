@@ -129,8 +129,11 @@ public class Character : NetworkBehaviour
         if (!HasInputAuthority) return;
         if (!CanSkill()) return;
         isUsingSkill = true;
-        RPC_RequestSkill();
         lastSkill = Time.time;
+        if (skill is Squid)
+            RPC_RequestSquidSkill();
+        else
+            RPC_RequestSkill();
     }
 
     [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
@@ -184,6 +187,7 @@ public class Character : NetworkBehaviour
     [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
     public void RPC_RequestSquidSkill()
     {
+        Debug.Log("[RequestSquidSkill]RPC_ExecuteSquidSkill 호출");
         RPC_ExecuteSquidSkill();
     }
     [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
