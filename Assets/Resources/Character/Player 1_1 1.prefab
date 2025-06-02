@@ -111,7 +111,7 @@ GameObject:
   - component: {fileID: 4939370475143424285}
   - component: {fileID: 6153917505316349898}
   m_Layer: 0
-  m_Name: Rooster
+  m_Name: Player 1_1 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -147,16 +147,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 16df5f2440717d949914e29ac81e2198, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characterName: Rooster
+  characterName: Player1
   animator: {fileID: 6153917505316349898}
   maxHp: 1000
   currentHp: 1000
   AttackCooltime: 1
   AttackRange: 1
   AttackDamage: 30
-  skill: {fileID: 11400000, guid: 6d13c7e6659e6c640b19d0f61e0f7512, type: 2}
+  skill: {fileID: 11400000, guid: 6de4f0bd562dab5428573255c0406f05, type: 2}
   firePoint: {fileID: 2121775484220535461}
-  currentStage: {fileID: 0}
 --- !u!114 &5622140301583662809
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -174,7 +173,6 @@ MonoBehaviour:
   Flags: 262145
   NestedObjects: []
   NetworkedBehaviours:
-  - {fileID: 3317617978666817901}
   - {fileID: 952355318055887179}
   - {fileID: 2631188256620354680}
   - {fileID: 4939370475143424285}

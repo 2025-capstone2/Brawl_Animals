@@ -1,29 +1,31 @@
-using Fusion;
 using UnityEngine;
-using System.Collections;
-
-public class WaterSprayController : NetworkBehaviour
+using System.Collections.Generic;
+/// <summary>
+/// 데미지 크기, 피격 대상 관리
+/// </summary>
+public class WaterSprayController : MonoBehaviour
 {
-    public GameObject owner;
-    public Transform followTarget;
+    public GameObject owner; // 발사자 캐릭터
 
-    public override void FixedUpdateNetwork()
+    private float damageCooltime = 0.5f; //한번 데미지를 입은 뒤 연속적으로 피해를 입지 않기 위해
+    private Dictionary<GameObject, float> lastHitTimes = new Dictionary<GameObject, float>();
+
+    private void OnParticleCollision(GameObject other)
     {
-        if (followTarget != null)
+        if (other == owner)
         {
-            transform.position = followTarget.position;
-            transform.rotation = followTarget.rotation;
+            return; // 자기가 자기를 맞추면 무시
         }
-    }
 
-    public override void Spawned()
-    {
-        StartCoroutine(DestroyAfterSeconds());
-    }
-
-    private IEnumerator DestroyAfterSeconds()
-    {
-        yield return new WaitForSeconds(3f);
-        Runner.Despawn(Object);
+        Character character = other.GetComponent<Character>();
+        if (character != null)
+        {
+            if (!lastHitTimes.ContainsKey(other) || Time.time - lastHitTimes[other] >= damageCooltime)
+            {
+                character.TakeDamage(50);
+                lastHitTimes[other] = Time.time;
+                Debug.Log($"물 스프레이 명중! {other.name} 피해 50");
+            }
+        }
     }
 }
