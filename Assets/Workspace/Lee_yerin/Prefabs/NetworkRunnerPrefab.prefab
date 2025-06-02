@@ -13,7 +13,6 @@ GameObject:
   - component: {fileID: 209570764108773333}
   - component: {fileID: 3515418673216946386}
   - component: {fileID: 5886083178202401678}
-  - component: {fileID: 6786508028328907048}
   m_Layer: 0
   m_Name: NetworkRunnerPrefab
   m_TagString: Untagged
@@ -129,8 +128,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d6deb3553bbf314f8410ec8b251eaed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PlayerPrefab: {fileID: 4018240343111223314, guid: d0b64caa744770241904160b838db386,
+  PlayerPrefab: {fileID: 4144613479144444641, guid: 87ead7a79d7121a44b6d74b321ce42ea,
     type: 3}
+  pendingPlayers: []
 --- !u!114 &5886083178202401678
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -143,21 +143,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b8edbe7108d8a43ab838cf8b8d9453df, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &6786508028328907048
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2066214651548133740}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  SortKey: 2300249409
-  ObjectInterest: 1
-  Flags: 262145
-  NestedObjects: []
-  NetworkedBehaviours: []
-  ForceRemoteRenderTimeframe: 0

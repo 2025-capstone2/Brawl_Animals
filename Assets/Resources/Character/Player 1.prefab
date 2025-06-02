@@ -18,6 +18,7 @@ GameObject:
   - component: {fileID: 952355318055887179}
   - component: {fileID: 8041304104161485888}
   - component: {fileID: -4294851122239989272}
+  - component: {fileID: 210752583266169240}
   m_Layer: 0
   m_Name: Player 1
   m_TagString: Untagged
@@ -128,9 +129,11 @@ MonoBehaviour:
   Flags: 262145
   NestedObjects: []
   NetworkedBehaviours:
+  - {fileID: 3317617978666817901}
   - {fileID: 952355318055887179}
   - {fileID: 8041304104161485888}
   - {fileID: -4294851122239989272}
+  - {fileID: 210752583266169240}
   ForceRemoteRenderTimeframe: 0
 --- !u!114 &4227836446395021810
 MonoBehaviour:
@@ -204,6 +207,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   kcc: {fileID: 0}
   character: {fileID: 0}
+  model: {fileID: 0}
   moveSpeed: 5
   jumpImpulse: 10
   upGravity: -25
@@ -224,11 +228,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 98f2ef66dee584f45877186636b9df8d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _stateAuthorityChangeErrorCorrectionDelta: 1
-  SyncScale: 0
-  SyncParent: 0
-  _autoAOIOverride: 1
-  DisableSharedModeInterpolation: 0
 --- !u!114 &-4294851122239989272
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -241,3 +240,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 98f2ef66dee584f45877186636b9df8d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &210752583266169240
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4018240343111223314}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 158639473, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _stateAuthorityChangeErrorCorrectionDelta: 0
+  SyncScale: 0
+  SyncParent: 0
+  _autoAOIOverride: 1
+  DisableSharedModeInterpolation: 0

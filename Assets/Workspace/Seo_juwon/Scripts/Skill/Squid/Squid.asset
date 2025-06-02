@@ -9,10 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 73202113b7a6ca54b9b25a6aff7975fe, type: 3}
-  m_Name: WaterSpray
+  m_Script: {fileID: 11500000, guid: 574406f1885434c45bb98f3e4f093b68, type: 3}
+  m_Name: Squid
   m_EditorClassIdentifier: 
-  cooltime: 5
-  sprayPrefab: {fileID: -1290104460797440915, guid: 269cb125d24b741488a294ced27f648f,
-    type: 3}
-  lifetime: 3
+  cooltime: 6
+  blindDelay: 1
+  fadeDuration: 1
