@@ -128,7 +128,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d6deb3553bbf314f8410ec8b251eaed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PlayerPrefab: {fileID: 4018240343111223314, guid: d0b64caa744770241904160b838db386,
+  PlayerPrefab: {fileID: 4144613479144444641, guid: 87ead7a79d7121a44b6d74b321ce42ea,
     type: 3}
   pendingPlayers: []
 --- !u!114 &5886083178202401678

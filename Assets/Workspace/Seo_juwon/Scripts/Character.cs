@@ -1,5 +1,6 @@
 using Fusion;
 using UnityEngine;
+using System.Collections;
 
 public class Character : NetworkBehaviour
 {
@@ -12,10 +13,14 @@ public class Character : NetworkBehaviour
     public float AttackRange = 2f;
     public int AttackDamage = 20;
     private float lastAttack = -10f;
-    private bool isUsingSkill = false;
+    public bool isUsingSkill = false;
     public Skill skill;
     public Transform firePoint;
     public StageManager currentStage;
+    [Header("상태 변수")]
+    private int skillHitCount = 0;
+    private float lastSkillHitTime = -10f;
+    private bool isStunned = false;
 
     private void Start()
     {
@@ -27,7 +32,7 @@ public class Character : NetworkBehaviour
             if (firePoint == null)
                 Debug.LogError("[Character] firePoint is null!");
         }
-
+        Debug.Log($"[UseSkill.STARTGAME] Skill 타입: {skill?.GetType().Name}");
         Debug.Log($"{characterName} HP: {currentHp}");
     }
 
@@ -120,9 +125,10 @@ public class Character : NetworkBehaviour
 
     public void UseSkill()
     {
+        Debug.Log($"[UseSkill].UseSkill Skill 타입: {skill?.GetType().Name}");
         if (!HasInputAuthority) return;
         if (!CanSkill()) return;
-
+        isUsingSkill = true;
         RPC_RequestSkill();
         lastSkill = Time.time;
     }
@@ -130,6 +136,7 @@ public class Character : NetworkBehaviour
     [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
     private void RPC_RequestSkill()
     {
+        Debug.Log("RPC_RequestSquidSkill 호출됨");
         RPC_ExecuteSkill();
     }
 
@@ -141,8 +148,58 @@ public class Character : NetworkBehaviour
             Debug.LogWarning("[Character] Skill 또는 firePoint 누락");
             return;
         }
+        skill.Execute(this, Runner, Object.InputAuthority);
+    }
 
-        skill.Execute(this, Runner, Object.InputAuthority); // 여기서 Runner.Spawn()
+    public void OnSkillHit(int damage)
+    {
+        TakeDamage(damage);
+
+        if (isStunned)
+            return;
+
+        skillHitCount++;
+        lastSkillHitTime = Time.time;
+
+        Debug.Log($"{characterName} 스킬 피격 누적: {skillHitCount}");
+
+        if (skillHitCount >= 8)
+            StartCoroutine(StunRoutine());
+    }
+
+    private IEnumerator StunRoutine()
+    {
+        isStunned = true;
+        animator.SetTrigger("Spin");
+
+        Debug.Log($"{characterName} 기절!");
+
+        yield return new WaitForSeconds(1f);
+
+        isStunned = false;
+        skillHitCount = 0;
+
+        Debug.Log($"{characterName} 기절 해제!");
+    }
+    [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
+    public void RPC_RequestSquidSkill()
+    {
+        RPC_ExecuteSquidSkill();
+    }
+    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+    private void RPC_ExecuteSquidSkill()
+    {
+        Debug.Log("RPC_ExecuteSquidSkill 호출됨");
+
+        if (!HasInputAuthority)
+        {
+            Debug.Log("HasInputAuthority == false → StartBlind 시도");
+            SquidUI.Instance?.StartBlind();
+        }
+        else
+        {
+            Debug.Log("내 캐릭터이므로 Blind 패스");
+        }
     }
 
     private void OnDrawGizmosSelected()
