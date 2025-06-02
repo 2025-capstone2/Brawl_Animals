@@ -32,12 +32,18 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Workspace/Lee_yerin/Scenes/DEV/Graveyard_Map_Feat_Scene.unity
     guid: 7263811d89c1ad04bb2cee4919fc50b2
-  - enabled: 1
+  - enabled: 0
     path: Assets/Workspace/Lee_yerin/Scenes/Demo/Demo_Title_Scene.unity
     guid: eca8dbe825df21e44a4f75b4d283a33b
-  - enabled: 1
+  - enabled: 0
     path: Assets/Workspace/Lee_yerin/Scenes/Demo/Demo_Room_Scene.unity
     guid: 3711f7d116061c04e9605a46dbc88a61
+  - enabled: 1
+    path: Assets/Workspace/Seo_juwon/Scenes/DemoScene.unity
+    guid: c6973c8631bfc8f4781bed96479ce574
+  - enabled: 1
+    path: Assets/Workspace/Seo_juwon/Scenes/DemoTitle.unity
+    guid: 1030c4545cf472e4b9e4d6aaad55951c
   m_configObjects:
     com.unity.adaptiveperformance.google.android.provider_settings: {fileID: 11400000,
       guid: 269f1a356dc402f448f69c72e1e44489, type: 2}

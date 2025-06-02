@@ -8,7 +8,6 @@ using Fusion.Addons.SimpleKCC;
 /// 입력은 외부 InputHandler에서 Fusion을 통해 전달받음
 /// kccSample 참고함
 /// </summary>
-[RequireComponent(typeof(NetworkTransform))]
 public class PlayerController : NetworkBehaviour
 {
     public SimpleKCC kcc; // SimpleKCC 컴포넌트
@@ -29,19 +28,31 @@ public class PlayerController : NetworkBehaviour
     private Vector3 moveVelocity { get; set; }
     [Networked]
     public PlayerRef PlayerId { get; set; }
-    public void Start()
-    {
-        Debug.Log($"[FixedUpdateNetwork] Object: {gameObject.name}, HasInputAuthority: {HasInputAuthority}, LocalPlayer: {Runner.LocalPlayer}, InputAuthority: {Object.InputAuthority}");
-    }
 
     public override void FixedUpdateNetwork()
     {
         if (!GetInput<NetworkInputData>(out var inputData))
-        {
             return;
+
+        //방향 입력
+        Vector3 inputDir;
+
+        if (HasInputAuthority && Camera.main != null)
+        {
+            Vector3 camForward = Camera.main.transform.forward;
+            Vector3 camRight = Camera.main.transform.right;
+            camForward.y = 0;
+            camRight.y = 0;
+            camForward.Normalize();
+            camRight.Normalize();
+
+            inputDir = camForward * inputData.moveInput.y + camRight * inputData.moveInput.x;
         }
-        // 방향 입력
-        Vector3 inputDir = new Vector3(inputData.moveInput.x, 0, inputData.moveInput.y);
+        else
+        {
+            inputDir = new Vector3(inputData.moveInput.x, 0, inputData.moveInput.y);
+        }
+
         if (inputDir.sqrMagnitude < 0.01f)
         {
             inputDir = Vector3.zero;
@@ -56,6 +67,7 @@ public class PlayerController : NetworkBehaviour
             if (model != null)
                 model.rotation = targetRot;
         }
+
         bool isRunning = inputDir != Vector3.zero;
         if (character.animator != null)
         {
@@ -65,10 +77,10 @@ public class PlayerController : NetworkBehaviour
                 character.animator.SetBool("IsRunning", false);
         }
 
-        // 중력 적용
+        //중력 적용
         kcc.SetGravity(kcc.RealVelocity.y >= 0f ? upGravity : downGravity);
 
-        // 이동 속도 계산
+        //이동 속도 계산
         Vector3 desiredVelocity = inputDir * moveSpeed;
 
         if (kcc.ProjectOnGround(desiredVelocity, out Vector3 projected))
@@ -76,21 +88,20 @@ public class PlayerController : NetworkBehaviour
             desiredVelocity = projected.normalized * moveSpeed;
         }
 
-        // 가속도 계산
         float accel = desiredVelocity == Vector3.zero
             ? (kcc.IsGrounded ? groundDeceleration : airDeceleration)
             : (kcc.IsGrounded ? groundAcceleration : airAcceleration);
 
         moveVelocity = Vector3.Lerp(moveVelocity, desiredVelocity, accel * Runner.DeltaTime);
 
-        // 실제 이동
         kcc.Move(moveVelocity);
 
-        // 스킬 및 공격 입력 처리
+        //스킬 및 공격 처리
         if (inputData.skill)
         {
             character.UseSkill();
         }
+
         if (inputData.attack)
         {
             character.TryAttack();

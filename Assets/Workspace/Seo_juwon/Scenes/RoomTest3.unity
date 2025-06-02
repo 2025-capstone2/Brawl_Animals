@@ -765,12 +765,12 @@ MonoBehaviour:
   stageVisualRoot: {fileID: 1988909364}
   gameManager: {fileID: 759923966}
   stageTime: 10
-  alivePlayers: []
   playersSpawnPoints:
   - {fileID: 19038010}
   - {fileID: 424445468}
   - {fileID: 228408166}
   - {fileID: 29203591}
+  leftTimeText: {fileID: 0}
 --- !u!4 &531784658
 Transform:
   m_ObjectHideFlags: 0
@@ -901,12 +901,12 @@ MonoBehaviour:
   stageVisualRoot: {fileID: 1169630482}
   gameManager: {fileID: 759923966}
   stageTime: 40
-  alivePlayers: []
   playersSpawnPoints:
   - {fileID: 470272713}
   - {fileID: 1751804204}
   - {fileID: 89378650}
   - {fileID: 1426373606}
+  leftTimeText: {fileID: 0}
 --- !u!4 &682772516
 Transform:
   m_ObjectHideFlags: 0
@@ -977,6 +977,7 @@ MonoBehaviour:
   ongoingStage: -1
   playerCharacters: []
   playerSpawner: {fileID: 0}
+  finishUI: {fileID: 0}
 --- !u!114 &759923967
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1526,12 +1527,12 @@ MonoBehaviour:
   stageVisualRoot: {fileID: 1761584708}
   gameManager: {fileID: 759923966}
   stageTime: 10
-  alivePlayers: []
   playersSpawnPoints:
   - {fileID: 628188160}
   - {fileID: 44326327}
   - {fileID: 402396300}
   - {fileID: 680174600}
+  leftTimeText: {fileID: 0}
 --- !u!4 &1223615732
 Transform:
   m_ObjectHideFlags: 0
@@ -1678,7 +1679,7 @@ MonoBehaviour:
     type: 3}
   _runner: {fileID: 0}
   _currentSessionName: DevRoom
-  _isHost: 0
+  _isHost: 1
 --- !u!4 &1563928845
 Transform:
   m_ObjectHideFlags: 0
@@ -2246,12 +2247,12 @@ MonoBehaviour:
   stageVisualRoot: {fileID: 146068163}
   gameManager: {fileID: 759923966}
   stageTime: 10
-  alivePlayers: []
   playersSpawnPoints:
   - {fileID: 1267486588}
   - {fileID: 292488616}
   - {fileID: 1063516739}
   - {fileID: 1744602041}
+  leftTimeText: {fileID: 0}
 --- !u!4 &1813416506
 Transform:
   m_ObjectHideFlags: 0
