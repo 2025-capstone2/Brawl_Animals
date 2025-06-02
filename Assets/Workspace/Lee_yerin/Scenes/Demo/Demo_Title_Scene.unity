@@ -1599,6 +1599,8 @@ MonoBehaviour:
   sfxSource: {fileID: 369882414}
   bgmClipList:
   - {fileID: 8300000, guid: ed0c0c828c2c4ba478d82c99bc97b04c, type: 3}
+  - {fileID: 8300000, guid: 845f28f9ae11b4b4181d3f627c5c4a1f, type: 3}
+  - {fileID: 8300000, guid: b7da48c15e710a741842583fac3307c7, type: 3}
   saveBGMVolme: 0
   saveSFXVolme: 0
 --- !u!4 &997116801

@@ -12,7 +12,9 @@ using UnityEngine.InputSystem.XR;
 /// </summary>
 public class PlayerSpawner : SimulationBehaviour, IPlayerJoined, IPlayerLeft
 {
-    public GameObject PlayerPrefab;
+    [Tooltip("첫번째 : 닭\n두번째 : 오징어\n")]
+    public List<GameObject> PlayerPrefab = new();
+    public Dictionary<PlayerRef, Animal> playerPickList;
 
     [SerializeField] public List<PlayerRef> pendingPlayers = new List<PlayerRef>();
 
@@ -35,7 +37,9 @@ public class PlayerSpawner : SimulationBehaviour, IPlayerJoined, IPlayerLeft
                 return null;
             }
 
-            NetworkObject playerObj = Runner.Spawn(PlayerPrefab, spawnPoint.position, Quaternion.identity, player);
+            GameObject chracter = PlayerPrefab[(int) playerPickList[player]];
+
+            NetworkObject playerObj = Runner.Spawn(chracter, spawnPoint.position, Quaternion.identity, player);
 
 
             if (playerObj == null)
@@ -119,4 +123,10 @@ public class PlayerSpawner : SimulationBehaviour, IPlayerJoined, IPlayerLeft
         return playerCharacters;
     }
     #endregion
+}
+
+public enum Animal
+{
+    Rooster,
+    Squid
 }
