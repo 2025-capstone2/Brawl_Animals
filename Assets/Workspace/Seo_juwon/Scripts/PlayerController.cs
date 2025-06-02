@@ -56,6 +56,14 @@ public class PlayerController : NetworkBehaviour
             if (model != null)
                 model.rotation = targetRot;
         }
+        bool isRunning = inputDir != Vector3.zero;
+        if (character.animator != null)
+        {
+            if (!character.isUsingSkill)
+                character.animator.SetBool("IsRunning", isRunning);
+            else
+                character.animator.SetBool("IsRunning", false);
+        }
 
         // 중력 적용
         kcc.SetGravity(kcc.RealVelocity.y >= 0f ? upGravity : downGravity);

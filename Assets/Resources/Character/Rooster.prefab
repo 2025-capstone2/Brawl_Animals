@@ -147,15 +147,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 16df5f2440717d949914e29ac81e2198, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characterName: Player1
+  characterName: Rooster
   animator: {fileID: 6153917505316349898}
   maxHp: 1000
   currentHp: 1000
   AttackCooltime: 1
   AttackRange: 1
   AttackDamage: 30
-  skill: {fileID: 11400000, guid: 6de4f0bd562dab5428573255c0406f05, type: 2}
+  skill: {fileID: 11400000, guid: 6d13c7e6659e6c640b19d0f61e0f7512, type: 2}
   firePoint: {fileID: 2121775484220535461}
+  currentStage: {fileID: 0}
 --- !u!114 &5622140301583662809
 MonoBehaviour:
   m_ObjectHideFlags: 0
