@@ -632,8 +632,8 @@ MonoBehaviour:
   skill: {fileID: 11400000, guid: 7f5f6f6ce08771647a74c70b398f259a, type: 2}
   firePoint: {fileID: 1741651920983020475}
   currentStage: {fileID: 0}
-  hpSlider: {fileID: 0}
-  hpFillImage: {fileID: 0}
+  hpSlider: {fileID: 8116953533472337896}
+  hpFillImage: {fileID: 4686839099772763162}
   hpColorGradient:
     serializedVersion: 2
     key0: {r: 1, g: 1, b: 1, a: 1}
