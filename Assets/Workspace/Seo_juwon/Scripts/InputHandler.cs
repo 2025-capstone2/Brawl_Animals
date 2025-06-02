@@ -29,9 +29,19 @@ public class InputHandler :  NetworkBehaviour, INetworkRunnerCallbacks
     // 네트워크 입력 데이터로 moveInput 전달
     public void OnInput(NetworkRunner runner, NetworkInput input)
     {
+        Vector3 camForward = Camera.main.transform.forward;
+        Vector3 camRight = Camera.main.transform.right;
+        camForward.y = 0;
+        camRight.y = 0;
+        camForward.Normalize();
+        camRight.Normalize();
+
+        Vector3 worldDir = camForward * moveInput.y + camRight * moveInput.x;
+        worldDir.Normalize();
+
         var data = new NetworkInputData
         {
-            moveInput = moveInput,
+            moveInput = new Vector2(worldDir.x, worldDir.z),
             skill = skill,
             attack = attack
         };

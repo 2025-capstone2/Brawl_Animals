@@ -37,21 +37,7 @@ public class PlayerController : NetworkBehaviour
         //방향 입력
         Vector3 inputDir;
 
-        if (HasInputAuthority && Camera.main != null)
-        {
-            Vector3 camForward = Camera.main.transform.forward;
-            Vector3 camRight = Camera.main.transform.right;
-            camForward.y = 0;
-            camRight.y = 0;
-            camForward.Normalize();
-            camRight.Normalize();
-
-            inputDir = camForward * inputData.moveInput.y + camRight * inputData.moveInput.x;
-        }
-        else
-        {
-            inputDir = new Vector3(inputData.moveInput.x, 0, inputData.moveInput.y);
-        }
+        inputDir = new Vector3(inputData.moveInput.x, 0, inputData.moveInput.y);
 
         if (inputDir.sqrMagnitude < 0.01f)
         {
