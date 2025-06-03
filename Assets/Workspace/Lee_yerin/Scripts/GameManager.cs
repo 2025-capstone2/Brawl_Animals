@@ -8,7 +8,7 @@ using UnityEngine;
 /// 게임의 전체적인 로직을 관리하는 싱글톤 클래스
 /// 스테이지 진행 및 게임 흐름을 제어한다
 /// </summary>
-public class GameManager : NetworkBehaviour
+public class GameManager : NetworkBehaviour, IPlayerLeft
 {
     #region Variables
     [Header("Game Logic")]
@@ -214,11 +214,37 @@ public class GameManager : NetworkBehaviour
         }
     }
 
+    /// <summary>
+    /// 게임 종료 로직 구현된 코루틴 실행하는 RPC 메서드
+    /// </summary>
     [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
     private void RpcFinishLogic()
     {
+        StartCoroutine(FinishLogicCoroutine());
+    }
+
+    /// <summary>
+    /// 게임 종료 로직 구현된 코루틴
+    /// 호스트일 경우 모든 플레이어 서버 연결 해제 후 실행
+    /// </summary>
+    /// <returns></returns>
+    private IEnumerator FinishLogicCoroutine()
+    {
+        if (Runner.IsServer)    // 클라이언트가 아닐 경우
+            yield return new WaitUntil(() => playerCharacters.Count == 1);  // 모든 클라이언트 연결 해제 후 진행
+
         finishUI.SetActive(true);
         SoundManager.Instance.PlayBGM(bgmClip.gameEnd);
+        Runner.Shutdown();
+    }
+
+    public void PlayerLeft(PlayerRef player)
+    {
+        for (int i = 0; i < playerCharacters.Count; i++)
+        {
+            if (playerCharacters[i].InputAuthority == player)
+                playerCharacters.Remove(playerCharacters[i]);
+        }
     }
     #endregion
 
